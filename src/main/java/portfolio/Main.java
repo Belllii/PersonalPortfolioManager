@@ -14,27 +14,45 @@ public class Main extends Application {
 
     private ListView<String> projectList = new ListView<>();
     private ListView<String> skillList = new ListView<>();
+    private ListView<String> noteList = new ListView<>();
 
     @Override
     public void start(Stage stage) {
 
-        Label heading = new Label("Personal Portfolio Manager");
+        Label heading =
+                new Label("Personal Portfolio Manager");
+
 
         // ================= PROJECT SECTION =================
 
-        TextField titleField = new TextField();
+        TextField titleField =
+                new TextField();
+
         titleField.setPromptText("Project Title");
 
-        TextArea descriptionField = new TextArea();
-        descriptionField.setPromptText("Project Description");
+        TextArea descriptionField =
+                new TextArea();
 
-        TextField githubField = new TextField();
-        githubField.setPromptText("GitHub Repository Link");
+        descriptionField.setPromptText(
+                "Project Description"
+        );
 
-        Button addButton = new Button("Add Project");
-        Button deleteButton = new Button("Delete Selected Project");
+        TextField githubField =
+                new TextField();
 
-        Label projectMessage = new Label();
+        githubField.setPromptText(
+                "GitHub Repository Link"
+        );
+
+        Button addButton =
+                new Button("Add Project");
+
+        Button deleteButton =
+                new Button("Delete Selected Project");
+
+        Label projectMessage =
+                new Label();
+
 
         // ADD PROJECT
         addButton.setOnAction(e -> {
@@ -47,18 +65,27 @@ public class Main extends Application {
                     description.isEmpty() ||
                     github.isEmpty()) {
 
-                projectMessage.setText("Please fill in all fields.");
+                projectMessage.setText(
+                        "Please fill in all fields."
+                );
 
             } else {
 
                 Project project =
-                        new Project(title, description, github);
+                        new Project(
+                                title,
+                                description,
+                                github
+                        );
 
                 projects.add(project);
 
-                projectList.getItems().add(project.getTitle());
+                projectList.getItems()
+                        .add(project.getTitle());
 
-                projectMessage.setText("Project added successfully.");
+                projectMessage.setText(
+                        "Project added successfully."
+                );
 
                 titleField.clear();
                 descriptionField.clear();
@@ -66,11 +93,13 @@ public class Main extends Application {
             }
         });
 
+
         // DELETE PROJECT
         deleteButton.setOnAction(e -> {
 
             int selectedIndex =
-                    projectList.getSelectionModel().getSelectedIndex();
+                    projectList.getSelectionModel()
+                            .getSelectedIndex();
 
             if (selectedIndex == -1) {
 
@@ -81,13 +110,16 @@ public class Main extends Application {
             } else {
 
                 projects.remove(selectedIndex);
-                projectList.getItems().remove(selectedIndex);
+
+                projectList.getItems()
+                        .remove(selectedIndex);
 
                 projectMessage.setText(
                         "Project deleted successfully."
                 );
             }
         });
+
 
         Label dashboardLabel =
                 new Label("Project Dashboard");
@@ -101,21 +133,27 @@ public class Main extends Application {
         TextField skillField =
                 new TextField();
 
-        skillField.setPromptText("Enter a skill");
+        skillField.setPromptText(
+                "Enter a skill"
+        );
 
         Button addSkillButton =
                 new Button("Add Skill");
 
         Button deleteSkillButton =
-                new Button("Delete Selected Skill");
+                new Button(
+                        "Delete Selected Skill"
+                );
 
         Label skillMessage =
                 new Label();
 
+
         // ADD SKILL
         addSkillButton.setOnAction(e -> {
 
-            String skill = skillField.getText();
+            String skill =
+                    skillField.getText();
 
             if (skill.isEmpty()) {
 
@@ -125,7 +163,8 @@ public class Main extends Application {
 
             } else {
 
-                skillList.getItems().add(skill);
+                skillList.getItems()
+                        .add(skill);
 
                 skillMessage.setText(
                         "Skill added successfully."
@@ -135,11 +174,13 @@ public class Main extends Application {
             }
         });
 
+
         // DELETE SKILL
         deleteSkillButton.setOnAction(e -> {
 
             int selectedIndex =
-                    skillList.getSelectionModel().getSelectedIndex();
+                    skillList.getSelectionModel()
+                            .getSelectedIndex();
 
             if (selectedIndex == -1) {
 
@@ -149,7 +190,8 @@ public class Main extends Application {
 
             } else {
 
-                skillList.getItems().remove(selectedIndex);
+                skillList.getItems()
+                        .remove(selectedIndex);
 
                 skillMessage.setText(
                         "Skill deleted successfully."
@@ -158,14 +200,91 @@ public class Main extends Application {
         });
 
 
+        // ================= NOTES / TO-DO =================
+
+        Label notesLabel =
+                new Label("Notes / To-Do");
+
+        TextField noteField =
+                new TextField();
+
+        noteField.setPromptText(
+                "Enter a note or task"
+        );
+
+        Button addNoteButton =
+                new Button("Add Note");
+
+        Button deleteNoteButton =
+                new Button(
+                        "Delete Selected Note"
+                );
+
+        Label noteMessage =
+                new Label();
+
+
+        // ADD NOTE
+        addNoteButton.setOnAction(e -> {
+
+            String note =
+                    noteField.getText();
+
+            if (note.isEmpty()) {
+
+                noteMessage.setText(
+                        "Please enter a note."
+                );
+
+            } else {
+
+                noteList.getItems()
+                        .add(note);
+
+                noteMessage.setText(
+                        "Note added successfully."
+                );
+
+                noteField.clear();
+            }
+        });
+
+
+        // DELETE NOTE
+        deleteNoteButton.setOnAction(e -> {
+
+            int selectedIndex =
+                    noteList.getSelectionModel()
+                            .getSelectedIndex();
+
+            if (selectedIndex == -1) {
+
+                noteMessage.setText(
+                        "Please select a note to delete."
+                );
+
+            } else {
+
+                noteList.getItems()
+                        .remove(selectedIndex);
+
+                noteMessage.setText(
+                        "Note deleted successfully."
+                );
+            }
+        });
+
+
         // ================= LAYOUT =================
 
-        VBox layout = new VBox(10);
+        VBox layout =
+                new VBox(10);
 
         layout.getChildren().addAll(
 
                 heading,
 
+                // Projects
                 titleField,
                 descriptionField,
                 githubField,
@@ -178,6 +297,7 @@ public class Main extends Application {
                 dashboardLabel,
                 projectList,
 
+                // Skills
                 skillsLabel,
 
                 skillField,
@@ -186,16 +306,32 @@ public class Main extends Application {
 
                 skillMessage,
 
-                skillList
+                skillList,
+
+                // Notes
+                notesLabel,
+
+                noteField,
+                addNoteButton,
+                deleteNoteButton,
+
+                noteMessage,
+
+                noteList
         );
 
-        Scene scene =
-                new Scene(layout, 600, 700);
 
-        stage.setTitle("Personal Portfolio Manager");
+        Scene scene =
+                new Scene(layout, 600, 800);
+
+        stage.setTitle(
+                "Personal Portfolio Manager"
+        );
+
         stage.setScene(scene);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         launch(args);
