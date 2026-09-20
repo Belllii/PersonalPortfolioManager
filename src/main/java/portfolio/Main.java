@@ -23,32 +23,62 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) {
 
+        // ================= MAIN HEADING =================
+
         Label heading =
                 new Label("Personal Portfolio Manager");
 
+
         // ================= PROJECT SECTION =================
 
-        TextField titleField = new TextField();
+        TextField titleField =
+                new TextField();
+
         titleField.setPromptText("Project Title");
 
-        TextArea descriptionField = new TextArea();
-        descriptionField.setPromptText("Project Description");
 
-        TextField githubField = new TextField();
-        githubField.setPromptText("GitHub Repository Link");
+        TextArea descriptionField =
+                new TextArea();
 
-        Button addButton = new Button("Add Project");
+        descriptionField.setPromptText(
+                "Project Description"
+        );
+
+
+        TextField githubField =
+                new TextField();
+
+        githubField.setPromptText(
+                "GitHub Repository Link"
+        );
+
+
+        Button addButton =
+                new Button("Add Project");
+
+
         Button deleteButton =
-                new Button("Delete Selected Project");
+                new Button(
+                        "Delete Selected Project"
+                );
 
-        Label projectMessage = new Label();
+
+        Label projectMessage =
+                new Label();
+
 
         // ADD PROJECT
         addButton.setOnAction(e -> {
 
-            String title = titleField.getText();
-            String description = descriptionField.getText();
-            String github = githubField.getText();
+            String title =
+                    titleField.getText();
+
+            String description =
+                    descriptionField.getText();
+
+            String github =
+                    githubField.getText();
+
 
             if (title.isEmpty() ||
                     description.isEmpty() ||
@@ -82,14 +112,16 @@ public class Main extends Application {
             }
         });
 
+
         // DELETE PROJECT
         deleteButton.setOnAction(e -> {
 
-            int selectedIndex =
+            String selectedTitle =
                     projectList.getSelectionModel()
-                            .getSelectedIndex();
+                            .getSelectedItem();
 
-            if (selectedIndex == -1) {
+
+            if (selectedTitle == null) {
 
                 projectMessage.setText(
                         "Please select a project to delete."
@@ -97,10 +129,25 @@ public class Main extends Application {
 
             } else {
 
-                projects.remove(selectedIndex);
+                // Find the project in the ArrayList
+                for (int i = 0;
+                     i < projects.size();
+                     i++) {
 
+                    if (projects.get(i)
+                            .getTitle()
+                            .equals(selectedTitle)) {
+
+                        projects.remove(i);
+                        break;
+                    }
+                }
+
+
+                // Remove from ListView
                 projectList.getItems()
-                        .remove(selectedIndex);
+                        .remove(selectedTitle);
+
 
                 projectMessage.setText(
                         "Project deleted successfully."
@@ -108,8 +155,47 @@ public class Main extends Application {
             }
         });
 
+
         Label dashboardLabel =
                 new Label("Project Dashboard");
+
+
+        // ================= SEARCH =================
+
+        TextField searchField =
+                new TextField();
+
+        searchField.setPromptText(
+                "Search projects..."
+        );
+
+
+        // Search whenever the text changes
+        searchField.textProperty()
+                .addListener(
+                        (observable, oldValue, newValue) -> {
+
+                            projectList.getItems()
+                                    .clear();
+
+
+                            for (Project project :
+                                    projects) {
+
+                                if (project.getTitle()
+                                        .toLowerCase()
+                                        .contains(
+                                                newValue
+                                                        .toLowerCase()
+                                        )) {
+
+                                    projectList.getItems()
+                                            .add(
+                                                    project.getTitle()
+                                            );
+                                }
+                            }
+                        });
 
 
         // ================= SKILLS SECTION =================
@@ -117,21 +203,35 @@ public class Main extends Application {
         Label skillsLabel =
                 new Label("Skills");
 
-        TextField skillField = new TextField();
-        skillField.setPromptText("Enter a skill");
+
+        TextField skillField =
+                new TextField();
+
+        skillField.setPromptText(
+                "Enter a skill"
+        );
+
 
         Button addSkillButton =
                 new Button("Add Skill");
 
-        Button deleteSkillButton =
-                new Button("Delete Selected Skill");
 
-        Label skillMessage = new Label();
+        Button deleteSkillButton =
+                new Button(
+                        "Delete Selected Skill"
+                );
+
+
+        Label skillMessage =
+                new Label();
+
 
         // ADD SKILL
         addSkillButton.setOnAction(e -> {
 
-            String skill = skillField.getText();
+            String skill =
+                    skillField.getText();
+
 
             if (skill.isEmpty()) {
 
@@ -141,7 +241,8 @@ public class Main extends Application {
 
             } else {
 
-                skillList.getItems().add(skill);
+                skillList.getItems()
+                        .add(skill);
 
                 skillMessage.setText(
                         "Skill added successfully."
@@ -151,12 +252,14 @@ public class Main extends Application {
             }
         });
 
+
         // DELETE SKILL
         deleteSkillButton.setOnAction(e -> {
 
             int selectedIndex =
                     skillList.getSelectionModel()
                             .getSelectedIndex();
+
 
             if (selectedIndex == -1) {
 
@@ -176,26 +279,40 @@ public class Main extends Application {
         });
 
 
-        // ================= NOTES =================
+        // ================= NOTES / TO-DO =================
 
         Label notesLabel =
                 new Label("Notes / To-Do");
 
-        TextField noteField = new TextField();
-        noteField.setPromptText("Enter a note or task");
+
+        TextField noteField =
+                new TextField();
+
+        noteField.setPromptText(
+                "Enter a note or task"
+        );
+
 
         Button addNoteButton =
                 new Button("Add Note");
 
-        Button deleteNoteButton =
-                new Button("Delete Selected Note");
 
-        Label noteMessage = new Label();
+        Button deleteNoteButton =
+                new Button(
+                        "Delete Selected Note"
+                );
+
+
+        Label noteMessage =
+                new Label();
+
 
         // ADD NOTE
         addNoteButton.setOnAction(e -> {
 
-            String note = noteField.getText();
+            String note =
+                    noteField.getText();
+
 
             if (note.isEmpty()) {
 
@@ -205,7 +322,8 @@ public class Main extends Application {
 
             } else {
 
-                noteList.getItems().add(note);
+                noteList.getItems()
+                        .add(note);
 
                 noteMessage.setText(
                         "Note added successfully."
@@ -215,12 +333,14 @@ public class Main extends Application {
             }
         });
 
+
         // DELETE NOTE
         deleteNoteButton.setOnAction(e -> {
 
             int selectedIndex =
                     noteList.getSelectionModel()
                             .getSelectedIndex();
+
 
             if (selectedIndex == -1) {
 
@@ -245,8 +365,10 @@ public class Main extends Application {
         Button saveButton =
                 new Button("Save Data");
 
+
         Label saveMessage =
                 new Label();
+
 
         saveButton.setOnAction(e -> {
 
@@ -263,8 +385,10 @@ public class Main extends Application {
         Button loadButton =
                 new Button("Load Data");
 
+
         Label loadMessage =
                 new Label();
+
 
         loadButton.setOnAction(e -> {
 
@@ -278,12 +402,15 @@ public class Main extends Application {
 
         // ================= LAYOUT =================
 
-        VBox layout = new VBox(10);
+        VBox layout =
+                new VBox(10);
+
 
         layout.getChildren().addAll(
 
                 heading,
 
+                // Projects
                 titleField,
                 descriptionField,
                 githubField,
@@ -294,8 +421,13 @@ public class Main extends Application {
                 projectMessage,
 
                 dashboardLabel,
+
+                // Search
+                searchField,
+
                 projectList,
 
+                // Skills
                 skillsLabel,
 
                 skillField,
@@ -306,6 +438,7 @@ public class Main extends Application {
 
                 skillList,
 
+                // Notes
                 notesLabel,
 
                 noteField,
@@ -316,6 +449,7 @@ public class Main extends Application {
 
                 noteList,
 
+                // Save / Load
                 saveButton,
                 saveMessage,
 
@@ -324,59 +458,90 @@ public class Main extends Application {
         );
 
 
+        // ================= SCENE =================
+
         Scene scene =
-                new Scene(layout, 600, 900);
+                new Scene(
+                        layout,
+                        600,
+                        900
+                );
+
 
         stage.setTitle(
                 "Personal Portfolio Manager"
         );
 
         stage.setScene(scene);
+
         stage.show();
 
-        // Load saved data when application starts
+
+        // Automatically load saved data
         loadData();
     }
 
 
-    // ================= SAVE METHOD =================
+    // ====================================================
+    // SAVE DATA
+    // ====================================================
 
     private void saveData() {
 
         try {
 
             FileWriter writer =
-                    new FileWriter("portfolio_data.txt");
+                    new FileWriter(
+                            "portfolio_data.txt"
+                    );
 
+
+            // PROJECTS
             writer.write("PROJECTS\n");
 
-            for (Project project : projects) {
+
+            for (Project project :
+                    projects) {
 
                 writer.write(
-                        project.getTitle() + "|" +
-                                project.getDescription() + "|" +
+                        project.getTitle() +
+                                "|" +
+                                project.getDescription() +
+                                "|" +
                                 project.getGithubLink() +
                                 "\n"
                 );
             }
 
+
+            // SKILLS
             writer.write("SKILLS\n");
+
 
             for (String skill :
                     skillList.getItems()) {
 
-                writer.write(skill + "\n");
+                writer.write(
+                        skill + "\n"
+                );
             }
 
+
+            // NOTES
             writer.write("NOTES\n");
+
 
             for (String note :
                     noteList.getItems()) {
 
-                writer.write(note + "\n");
+                writer.write(
+                        note + "\n"
+                );
             }
 
+
             writer.close();
+
 
         } catch (IOException ex) {
 
@@ -387,7 +552,9 @@ public class Main extends Application {
     }
 
 
-    // ================= LOAD METHOD =================
+    // ====================================================
+    // LOAD DATA
+    // ====================================================
 
     private void loadData() {
 
@@ -400,45 +567,68 @@ public class Main extends Application {
                             )
                     );
 
+
             String line;
+
             String section = "";
+
 
             // Clear existing data
             projects.clear();
-            projectList.getItems().clear();
 
-            skillList.getItems().clear();
+            projectList.getItems()
+                    .clear();
 
-            noteList.getItems().clear();
+            skillList.getItems()
+                    .clear();
+
+            noteList.getItems()
+                    .clear();
 
 
-            while ((line = reader.readLine()) != null) {
+            // Read file line by line
+            while (
+                    (line = reader.readLine())
+                            != null
+            ) {
 
-                // Check which section we are reading
+
+                // PROJECT SECTION
                 if (line.equals("PROJECTS")) {
 
                     section = "PROJECTS";
+
                     continue;
                 }
 
+
+                // SKILL SECTION
                 if (line.equals("SKILLS")) {
 
                     section = "SKILLS";
+
                     continue;
                 }
 
+
+                // NOTES SECTION
                 if (line.equals("NOTES")) {
 
                     section = "NOTES";
+
                     continue;
                 }
 
 
-                // Load projects
+                // LOAD PROJECT
                 if (section.equals("PROJECTS")) {
 
                     String[] data =
-                            line.split("\\|", -1);
+                            line.split(
+                                    "\\|",
+                                    -1
+                            );
+
 
                     if (data.length == 3) {
 
@@ -449,31 +639,41 @@ public class Main extends Application {
                                         data[2]
                                 );
 
+
                         projects.add(project);
 
+
                         projectList.getItems()
-                                .add(project.getTitle());
+                                .add(
+                                        project.getTitle()
+                                );
                     }
                 }
 
 
-                // Load skills
-                else if (section.equals("SKILLS")) {
+                // LOAD SKILL
+                else if (
+                        section.equals("SKILLS")
+                ) {
 
                     skillList.getItems()
                             .add(line);
                 }
 
 
-                // Load notes
-                else if (section.equals("NOTES")) {
+                // LOAD NOTE
+                else if (
+                        section.equals("NOTES")
+                ) {
 
                     noteList.getItems()
                             .add(line);
                 }
             }
 
+
             reader.close();
+
 
         } catch (IOException ex) {
 
@@ -484,7 +684,12 @@ public class Main extends Application {
     }
 
 
+    // ====================================================
+    // MAIN
+    // ====================================================
+
     public static void main(String[] args) {
+
         launch(args);
     }
 }

@@ -3,6 +3,7 @@ ConnectSphere|A social network Analyzer|https://github.com/Belllii
 13 bit Computer|A mini computer system|https://github.com/Belllii
 Smart Energy System|Arduino based project to reduce energy waste.|https://github.com/Belllii
 AgroHub|A console based project to help the farmers.|https://github
+Traffic Light Controller|An FPGA based Project|https//Belliii
 SKILLS
 C++
 Structured Programming
