@@ -33,9 +33,18 @@ public class Main extends Application {
             String github = githubField.getText();
 
             if (title.isEmpty() || description.isEmpty() || github.isEmpty()) {
+
                 result.setText("Please fill in all fields.");
+
             } else {
-                result.setText("Project added: " + title);
+
+                Project project =
+                        new Project(title, description, github);
+
+                result.setText(
+                        "Project added:\n" +
+                                project.getTitle()
+                );
 
                 titleField.clear();
                 descriptionField.clear();
