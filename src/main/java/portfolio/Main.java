@@ -6,6 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -248,54 +250,29 @@ public class Main extends Application {
 
         saveButton.setOnAction(e -> {
 
-            try {
+            saveData();
 
-                FileWriter writer =
-                        new FileWriter("portfolio_data.txt");
+            saveMessage.setText(
+                    "Data saved successfully."
+            );
+        });
 
-                // Save projects
-                writer.write("PROJECTS\n");
 
-                for (Project project : projects) {
+        // ================= LOAD DATA =================
 
-                    writer.write(
-                            project.getTitle() + "|" +
-                                    project.getDescription() + "|" +
-                                    project.getGithubLink() +
-                                    "\n"
-                    );
-                }
+        Button loadButton =
+                new Button("Load Data");
 
-                // Save skills
-                writer.write("SKILLS\n");
+        Label loadMessage =
+                new Label();
 
-                for (String skill :
-                        skillList.getItems()) {
+        loadButton.setOnAction(e -> {
 
-                    writer.write(skill + "\n");
-                }
+            loadData();
 
-                // Save notes
-                writer.write("NOTES\n");
-
-                for (String note :
-                        noteList.getItems()) {
-
-                    writer.write(note + "\n");
-                }
-
-                writer.close();
-
-                saveMessage.setText(
-                        "Data saved successfully."
-                );
-
-            } catch (IOException ex) {
-
-                saveMessage.setText(
-                        "Error while saving data."
-                );
-            }
+            loadMessage.setText(
+                    "Data loaded successfully."
+            );
         });
 
 
@@ -340,12 +317,15 @@ public class Main extends Application {
                 noteList,
 
                 saveButton,
-                saveMessage
+                saveMessage,
+
+                loadButton,
+                loadMessage
         );
 
 
         Scene scene =
-                new Scene(layout, 600, 850);
+                new Scene(layout, 600, 900);
 
         stage.setTitle(
                 "Personal Portfolio Manager"
@@ -353,6 +333,154 @@ public class Main extends Application {
 
         stage.setScene(scene);
         stage.show();
+
+        // Load saved data when application starts
+        loadData();
+    }
+
+
+    // ================= SAVE METHOD =================
+
+    private void saveData() {
+
+        try {
+
+            FileWriter writer =
+                    new FileWriter("portfolio_data.txt");
+
+            writer.write("PROJECTS\n");
+
+            for (Project project : projects) {
+
+                writer.write(
+                        project.getTitle() + "|" +
+                                project.getDescription() + "|" +
+                                project.getGithubLink() +
+                                "\n"
+                );
+            }
+
+            writer.write("SKILLS\n");
+
+            for (String skill :
+                    skillList.getItems()) {
+
+                writer.write(skill + "\n");
+            }
+
+            writer.write("NOTES\n");
+
+            for (String note :
+                    noteList.getItems()) {
+
+                writer.write(note + "\n");
+            }
+
+            writer.close();
+
+        } catch (IOException ex) {
+
+            System.out.println(
+                    "Error saving data."
+            );
+        }
+    }
+
+
+    // ================= LOAD METHOD =================
+
+    private void loadData() {
+
+        try {
+
+            BufferedReader reader =
+                    new BufferedReader(
+                            new FileReader(
+                                    "portfolio_data.txt"
+                            )
+                    );
+
+            String line;
+            String section = "";
+
+            // Clear existing data
+            projects.clear();
+            projectList.getItems().clear();
+
+            skillList.getItems().clear();
+
+            noteList.getItems().clear();
+
+
+            while ((line = reader.readLine()) != null) {
+
+                // Check which section we are reading
+                if (line.equals("PROJECTS")) {
+
+                    section = "PROJECTS";
+                    continue;
+                }
+
+                if (line.equals("SKILLS")) {
+
+                    section = "SKILLS";
+                    continue;
+                }
+
+                if (line.equals("NOTES")) {
+
+                    section = "NOTES";
+                    continue;
+                }
+
+
+                // Load projects
+                if (section.equals("PROJECTS")) {
+
+                    String[] data =
+                            line.split("\\|", -1);
+
+                    if (data.length == 3) {
+
+                        Project project =
+                                new Project(
+                                        data[0],
+                                        data[1],
+                                        data[2]
+                                );
+
+                        projects.add(project);
+
+                        projectList.getItems()
+                                .add(project.getTitle());
+                    }
+                }
+
+
+                // Load skills
+                else if (section.equals("SKILLS")) {
+
+                    skillList.getItems()
+                            .add(line);
+                }
+
+
+                // Load notes
+                else if (section.equals("NOTES")) {
+
+                    noteList.getItems()
+                            .add(line);
+                }
+            }
+
+            reader.close();
+
+        } catch (IOException ex) {
+
+            System.out.println(
+                    "No saved data found."
+            );
+        }
     }
 
 
