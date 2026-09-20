@@ -1,0 +1,11 @@
+PROJECTS
+ConnectSphere|A social network Analyzer|https://github.com/Belllii
+13 bit Computer|A mini computer system|https://github.com/Belllii
+Smart Energy System|Arduino based project to reduce energy waste.|https://github.com/Belllii
+SKILLS
+C++
+Structured Programming
+OOP
+DSA
+NOTES
+Have to work on Advanced Programming Assignment

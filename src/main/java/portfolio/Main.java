@@ -6,6 +6,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Main extends Application {
@@ -22,37 +24,22 @@ public class Main extends Application {
         Label heading =
                 new Label("Personal Portfolio Manager");
 
-
         // ================= PROJECT SECTION =================
 
-        TextField titleField =
-                new TextField();
-
+        TextField titleField = new TextField();
         titleField.setPromptText("Project Title");
 
-        TextArea descriptionField =
-                new TextArea();
+        TextArea descriptionField = new TextArea();
+        descriptionField.setPromptText("Project Description");
 
-        descriptionField.setPromptText(
-                "Project Description"
-        );
+        TextField githubField = new TextField();
+        githubField.setPromptText("GitHub Repository Link");
 
-        TextField githubField =
-                new TextField();
-
-        githubField.setPromptText(
-                "GitHub Repository Link"
-        );
-
-        Button addButton =
-                new Button("Add Project");
-
+        Button addButton = new Button("Add Project");
         Button deleteButton =
                 new Button("Delete Selected Project");
 
-        Label projectMessage =
-                new Label();
-
+        Label projectMessage = new Label();
 
         // ADD PROJECT
         addButton.setOnAction(e -> {
@@ -93,7 +80,6 @@ public class Main extends Application {
             }
         });
 
-
         // DELETE PROJECT
         deleteButton.setOnAction(e -> {
 
@@ -120,7 +106,6 @@ public class Main extends Application {
             }
         });
 
-
         Label dashboardLabel =
                 new Label("Project Dashboard");
 
@@ -130,30 +115,21 @@ public class Main extends Application {
         Label skillsLabel =
                 new Label("Skills");
 
-        TextField skillField =
-                new TextField();
-
-        skillField.setPromptText(
-                "Enter a skill"
-        );
+        TextField skillField = new TextField();
+        skillField.setPromptText("Enter a skill");
 
         Button addSkillButton =
                 new Button("Add Skill");
 
         Button deleteSkillButton =
-                new Button(
-                        "Delete Selected Skill"
-                );
+                new Button("Delete Selected Skill");
 
-        Label skillMessage =
-                new Label();
-
+        Label skillMessage = new Label();
 
         // ADD SKILL
         addSkillButton.setOnAction(e -> {
 
-            String skill =
-                    skillField.getText();
+            String skill = skillField.getText();
 
             if (skill.isEmpty()) {
 
@@ -163,8 +139,7 @@ public class Main extends Application {
 
             } else {
 
-                skillList.getItems()
-                        .add(skill);
+                skillList.getItems().add(skill);
 
                 skillMessage.setText(
                         "Skill added successfully."
@@ -173,7 +148,6 @@ public class Main extends Application {
                 skillField.clear();
             }
         });
-
 
         // DELETE SKILL
         deleteSkillButton.setOnAction(e -> {
@@ -200,35 +174,26 @@ public class Main extends Application {
         });
 
 
-        // ================= NOTES / TO-DO =================
+        // ================= NOTES =================
 
         Label notesLabel =
                 new Label("Notes / To-Do");
 
-        TextField noteField =
-                new TextField();
-
-        noteField.setPromptText(
-                "Enter a note or task"
-        );
+        TextField noteField = new TextField();
+        noteField.setPromptText("Enter a note or task");
 
         Button addNoteButton =
                 new Button("Add Note");
 
         Button deleteNoteButton =
-                new Button(
-                        "Delete Selected Note"
-                );
+                new Button("Delete Selected Note");
 
-        Label noteMessage =
-                new Label();
-
+        Label noteMessage = new Label();
 
         // ADD NOTE
         addNoteButton.setOnAction(e -> {
 
-            String note =
-                    noteField.getText();
+            String note = noteField.getText();
 
             if (note.isEmpty()) {
 
@@ -238,8 +203,7 @@ public class Main extends Application {
 
             } else {
 
-                noteList.getItems()
-                        .add(note);
+                noteList.getItems().add(note);
 
                 noteMessage.setText(
                         "Note added successfully."
@@ -248,7 +212,6 @@ public class Main extends Application {
                 noteField.clear();
             }
         });
-
 
         // DELETE NOTE
         deleteNoteButton.setOnAction(e -> {
@@ -275,16 +238,75 @@ public class Main extends Application {
         });
 
 
+        // ================= SAVE DATA =================
+
+        Button saveButton =
+                new Button("Save Data");
+
+        Label saveMessage =
+                new Label();
+
+        saveButton.setOnAction(e -> {
+
+            try {
+
+                FileWriter writer =
+                        new FileWriter("portfolio_data.txt");
+
+                // Save projects
+                writer.write("PROJECTS\n");
+
+                for (Project project : projects) {
+
+                    writer.write(
+                            project.getTitle() + "|" +
+                                    project.getDescription() + "|" +
+                                    project.getGithubLink() +
+                                    "\n"
+                    );
+                }
+
+                // Save skills
+                writer.write("SKILLS\n");
+
+                for (String skill :
+                        skillList.getItems()) {
+
+                    writer.write(skill + "\n");
+                }
+
+                // Save notes
+                writer.write("NOTES\n");
+
+                for (String note :
+                        noteList.getItems()) {
+
+                    writer.write(note + "\n");
+                }
+
+                writer.close();
+
+                saveMessage.setText(
+                        "Data saved successfully."
+                );
+
+            } catch (IOException ex) {
+
+                saveMessage.setText(
+                        "Error while saving data."
+                );
+            }
+        });
+
+
         // ================= LAYOUT =================
 
-        VBox layout =
-                new VBox(10);
+        VBox layout = new VBox(10);
 
         layout.getChildren().addAll(
 
                 heading,
 
-                // Projects
                 titleField,
                 descriptionField,
                 githubField,
@@ -297,7 +319,6 @@ public class Main extends Application {
                 dashboardLabel,
                 projectList,
 
-                // Skills
                 skillsLabel,
 
                 skillField,
@@ -308,7 +329,6 @@ public class Main extends Application {
 
                 skillList,
 
-                // Notes
                 notesLabel,
 
                 noteField,
@@ -317,12 +337,15 @@ public class Main extends Application {
 
                 noteMessage,
 
-                noteList
+                noteList,
+
+                saveButton,
+                saveMessage
         );
 
 
         Scene scene =
-                new Scene(layout, 600, 800);
+                new Scene(layout, 600, 850);
 
         stage.setTitle(
                 "Personal Portfolio Manager"
