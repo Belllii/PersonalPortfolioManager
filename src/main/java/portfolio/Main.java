@@ -1,9 +1,10 @@
 package portfolio;
 
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import java.io.BufferedReader;
@@ -28,13 +29,39 @@ public class Main extends Application {
         Label heading =
                 new Label("Personal Portfolio Manager");
 
+        heading.setStyle(
+                "-fx-font-size: 24px; " +
+                        "-fx-font-weight: bold;"
+        );
+
+
+        Label subtitle =
+                new Label(
+                        "Manage your projects, skills and tasks"
+                );
+
+        subtitle.setStyle(
+                "-fx-font-size: 14px;"
+        );
+
 
         // ================= PROJECT SECTION =================
+
+        Label projectSection =
+                new Label("Projects");
+
+        projectSection.setStyle(
+                "-fx-font-size: 18px; " +
+                        "-fx-font-weight: bold;"
+        );
+
 
         TextField titleField =
                 new TextField();
 
-        titleField.setPromptText("Project Title");
+        titleField.setPromptText(
+                "Project Title"
+        );
 
 
         TextArea descriptionField =
@@ -43,6 +70,8 @@ public class Main extends Application {
         descriptionField.setPromptText(
                 "Project Description"
         );
+
+        descriptionField.setPrefRowCount(3);
 
 
         TextField githubField =
@@ -129,7 +158,6 @@ public class Main extends Application {
 
             } else {
 
-                // Find the project in the ArrayList
                 for (int i = 0;
                      i < projects.size();
                      i++) {
@@ -144,7 +172,6 @@ public class Main extends Application {
                 }
 
 
-                // Remove from ListView
                 projectList.getItems()
                         .remove(selectedTitle);
 
@@ -156,12 +183,7 @@ public class Main extends Application {
         });
 
 
-        Label dashboardLabel =
-                new Label("Project Dashboard");
-
-
-        // ================= SEARCH =================
-
+        // SEARCH
         TextField searchField =
                 new TextField();
 
@@ -170,10 +192,11 @@ public class Main extends Application {
         );
 
 
-        // Search whenever the text changes
         searchField.textProperty()
                 .addListener(
-                        (observable, oldValue, newValue) -> {
+                        (observable,
+                         oldValue,
+                         newValue) -> {
 
                             projectList.getItems()
                                     .clear();
@@ -198,10 +221,28 @@ public class Main extends Application {
                         });
 
 
-        // ================= SKILLS SECTION =================
+        projectList.setPrefHeight(150);
 
-        Label skillsLabel =
+
+        HBox projectButtons =
+                new HBox(10);
+
+        projectButtons.getChildren()
+                .addAll(
+                        addButton,
+                        deleteButton
+                );
+
+
+        // ================= SKILLS =================
+
+        Label skillsSection =
                 new Label("Skills");
+
+        skillsSection.setStyle(
+                "-fx-font-size: 18px; " +
+                        "-fx-font-weight: bold;"
+        );
 
 
         TextField skillField =
@@ -226,7 +267,6 @@ public class Main extends Application {
                 new Label();
 
 
-        // ADD SKILL
         addSkillButton.setOnAction(e -> {
 
             String skill =
@@ -253,7 +293,6 @@ public class Main extends Application {
         });
 
 
-        // DELETE SKILL
         deleteSkillButton.setOnAction(e -> {
 
             int selectedIndex =
@@ -279,10 +318,28 @@ public class Main extends Application {
         });
 
 
-        // ================= NOTES / TO-DO =================
+        skillList.setPrefHeight(120);
 
-        Label notesLabel =
+
+        HBox skillButtons =
+                new HBox(10);
+
+        skillButtons.getChildren()
+                .addAll(
+                        addSkillButton,
+                        deleteSkillButton
+                );
+
+
+        // ================= NOTES =================
+
+        Label notesSection =
                 new Label("Notes / To-Do");
+
+        notesSection.setStyle(
+                "-fx-font-size: 18px; " +
+                        "-fx-font-weight: bold;"
+        );
 
 
         TextField noteField =
@@ -307,7 +364,6 @@ public class Main extends Application {
                 new Label();
 
 
-        // ADD NOTE
         addNoteButton.setOnAction(e -> {
 
             String note =
@@ -334,7 +390,6 @@ public class Main extends Application {
         });
 
 
-        // DELETE NOTE
         deleteNoteButton.setOnAction(e -> {
 
             int selectedIndex =
@@ -360,13 +415,30 @@ public class Main extends Application {
         });
 
 
-        // ================= SAVE DATA =================
+        noteList.setPrefHeight(120);
+
+
+        HBox noteButtons =
+                new HBox(10);
+
+        noteButtons.getChildren()
+                .addAll(
+                        addNoteButton,
+                        deleteNoteButton
+                );
+
+
+        // ================= SAVE / LOAD =================
 
         Button saveButton =
                 new Button("Save Data");
 
 
-        Label saveMessage =
+        Button loadButton =
+                new Button("Load Data");
+
+
+        Label dataMessage =
                 new Label();
 
 
@@ -374,87 +446,100 @@ public class Main extends Application {
 
             saveData();
 
-            saveMessage.setText(
+            dataMessage.setText(
                     "Data saved successfully."
             );
         });
-
-
-        // ================= LOAD DATA =================
-
-        Button loadButton =
-                new Button("Load Data");
-
-
-        Label loadMessage =
-                new Label();
 
 
         loadButton.setOnAction(e -> {
 
             loadData();
 
-            loadMessage.setText(
+            dataMessage.setText(
                     "Data loaded successfully."
             );
         });
 
 
-        // ================= LAYOUT =================
+        HBox dataButtons =
+                new HBox(10);
+
+        dataButtons.getChildren()
+                .addAll(
+                        saveButton,
+                        loadButton
+                );
+
+
+        // ================= MAIN LAYOUT =================
 
         VBox layout =
-                new VBox(10);
+                new VBox(15);
+
+
+        layout.setPadding(
+                new Insets(20)
+        );
 
 
         layout.getChildren().addAll(
 
                 heading,
+                subtitle,
 
                 // Projects
+                projectSection,
+
                 titleField,
                 descriptionField,
                 githubField,
 
-                addButton,
-                deleteButton,
+                projectButtons,
 
                 projectMessage,
 
-                dashboardLabel,
+                new Label("Project Dashboard"),
 
-                // Search
                 searchField,
-
                 projectList,
 
                 // Skills
-                skillsLabel,
+                skillsSection,
 
                 skillField,
-                addSkillButton,
-                deleteSkillButton,
+                skillButtons,
 
                 skillMessage,
 
                 skillList,
 
                 // Notes
-                notesLabel,
+                notesSection,
 
                 noteField,
-                addNoteButton,
-                deleteNoteButton,
+                noteButtons,
 
                 noteMessage,
 
                 noteList,
 
                 // Save / Load
-                saveButton,
-                saveMessage,
+                dataButtons,
 
-                loadButton,
-                loadMessage
+                dataMessage
+        );
+
+
+        // ================= SCROLL =================
+
+        ScrollPane scrollPane =
+                new ScrollPane(layout);
+
+        scrollPane.setFitToWidth(true);
+
+        scrollPane.setHbarPolicy(
+                ScrollPane.ScrollBarPolicy.NEVER
         );
 
 
@@ -462,9 +547,9 @@ public class Main extends Application {
 
         Scene scene =
                 new Scene(
-                        layout,
-                        600,
-                        900
+                        scrollPane,
+                        700,
+                        750
                 );
 
 
@@ -496,7 +581,6 @@ public class Main extends Application {
                     );
 
 
-            // PROJECTS
             writer.write("PROJECTS\n");
 
 
@@ -514,7 +598,6 @@ public class Main extends Application {
             }
 
 
-            // SKILLS
             writer.write("SKILLS\n");
 
 
@@ -527,7 +610,6 @@ public class Main extends Application {
             }
 
 
-            // NOTES
             writer.write("NOTES\n");
 
 
@@ -569,11 +651,9 @@ public class Main extends Application {
 
 
             String line;
-
             String section = "";
 
 
-            // Clear existing data
             projects.clear();
 
             projectList.getItems()
@@ -586,41 +666,32 @@ public class Main extends Application {
                     .clear();
 
 
-            // Read file line by line
             while (
                     (line = reader.readLine())
                             != null
             ) {
 
-
-                // PROJECT SECTION
                 if (line.equals("PROJECTS")) {
 
                     section = "PROJECTS";
-
                     continue;
                 }
 
 
-                // SKILL SECTION
                 if (line.equals("SKILLS")) {
 
                     section = "SKILLS";
-
                     continue;
                 }
 
 
-                // NOTES SECTION
                 if (line.equals("NOTES")) {
 
                     section = "NOTES";
-
                     continue;
                 }
 
 
-                // LOAD PROJECT
                 if (section.equals("PROJECTS")) {
 
                     String[] data =
@@ -651,7 +722,6 @@ public class Main extends Application {
                 }
 
 
-                // LOAD SKILL
                 else if (
                         section.equals("SKILLS")
                 ) {
@@ -661,7 +731,6 @@ public class Main extends Application {
                 }
 
 
-                // LOAD NOTE
                 else if (
                         section.equals("NOTES")
                 ) {
@@ -683,10 +752,6 @@ public class Main extends Application {
         }
     }
 
-
-    // ====================================================
-    // MAIN
-    // ====================================================
 
     public static void main(String[] args) {
 
