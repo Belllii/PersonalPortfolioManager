@@ -14,7 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 public class DashboardController {
 
     @FXML
@@ -74,6 +78,20 @@ public class DashboardController {
     @FXML
     private Label projectMessage;
 
+    @FXML
+    private TableView<Project> projectTable;
+
+    @FXML
+    private TableColumn<Project, String> titleColumn;
+
+    @FXML
+    private TableColumn<Project, String> technologyColumn;
+
+    @FXML
+    private TableColumn<Project, String> githubColumn;
+
+    private ObservableList<Project> projectList =
+            FXCollections.observableArrayList();
 
     @FXML
     public void initialize() {
@@ -150,6 +168,20 @@ public class DashboardController {
         projectMessage.setTextFill(
                 Color.web("#38BDF8")
         );
+        // Project table
+        titleColumn.setCellValueFactory(
+                new PropertyValueFactory<>("title")
+        );
+
+        technologyColumn.setCellValueFactory(
+                new PropertyValueFactory<>("technology")
+        );
+
+        githubColumn.setCellValueFactory(
+                new PropertyValueFactory<>("githubLink")
+        );
+
+        projectTable.setItems(projectList);
     }
 
 
@@ -213,7 +245,7 @@ public class DashboardController {
                 technology,
                 github
         );
-
+        projectList.add(project);
 
         projectMessage.setText(
                 "Project added: " + project.getTitle()
