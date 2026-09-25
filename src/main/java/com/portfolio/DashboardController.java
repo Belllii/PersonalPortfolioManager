@@ -1,8 +1,15 @@
 package com.portfolio;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -29,9 +36,6 @@ public class DashboardController {
     private Label welcome;
 
     @FXML
-    private Label pageDescription;
-
-    @FXML
     private Button dashboardButton;
 
     @FXML
@@ -51,6 +55,24 @@ public class DashboardController {
 
     @FXML
     private Button settingsButton;
+
+    @FXML
+    private TextField titleField;
+
+    @FXML
+    private TextArea descriptionField;
+
+    @FXML
+    private TextField technologyField;
+
+    @FXML
+    private TextField githubField;
+
+    @FXML
+    private Button addProjectButton;
+
+    @FXML
+    private Label projectMessage;
 
 
     @FXML
@@ -86,7 +108,7 @@ public class DashboardController {
         setupButton(settingsButton);
 
 
-        // Main content
+        // Page title
         pageTitle.setFont(
                 Font.font("Arial", FontWeight.BOLD, 30)
         );
@@ -94,6 +116,7 @@ public class DashboardController {
         pageTitle.setTextFill(Color.WHITE);
 
 
+        // Welcome text
         welcome.setFont(
                 Font.font("Arial", 16)
         );
@@ -103,12 +126,29 @@ public class DashboardController {
         );
 
 
-        pageDescription.setFont(
-                Font.font("Arial", 14)
+        // Form button
+        addProjectButton.setPrefWidth(150);
+        addProjectButton.setPrefHeight(40);
+
+        addProjectButton.setFont(
+                Font.font("Arial", FontWeight.BOLD, 13)
         );
 
-        pageDescription.setTextFill(
-                Color.web("#94A3B8")
+        addProjectButton.setTextFill(Color.WHITE);
+
+        addProjectButton.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#2563EB"),
+                                new CornerRadii(8),
+                                Insets.EMPTY
+                        )
+                )
+        );
+
+
+        projectMessage.setTextFill(
+                Color.web("#38BDF8")
         );
     }
 
@@ -118,9 +158,7 @@ public class DashboardController {
         button.setPrefWidth(180);
         button.setPrefHeight(42);
 
-        button.setAlignment(
-                javafx.geometry.Pos.CENTER_LEFT
-        );
+        button.setAlignment(Pos.CENTER_LEFT);
 
         button.setFont(
                 Font.font("Arial", FontWeight.BOLD, 13)
@@ -129,20 +167,74 @@ public class DashboardController {
         button.setTextFill(Color.WHITE);
 
         button.setBackground(
-                new javafx.scene.layout.Background(
-                        new javafx.scene.layout.BackgroundFill(
+                new Background(
+                        new BackgroundFill(
                                 Color.web("#111827"),
-                                new javafx.scene.layout.CornerRadii(8),
-                                javafx.geometry.Insets.EMPTY
+                                new CornerRadii(8),
+                                Insets.EMPTY
                         )
                 )
         );
     }
 
 
-    // ==========================
-    // NAVIGATION EVENTS
-    // ==========================
+    // ==========================================
+    // ADD PROJECT
+    // ==========================================
+
+    @FXML
+    private void addProject() {
+
+        String title = titleField.getText();
+        String description = descriptionField.getText();
+        String technology = technologyField.getText();
+        String github = githubField.getText();
+
+
+        if (title.isEmpty() ||
+                description.isEmpty() ||
+                technology.isEmpty()) {
+
+            projectMessage.setText(
+                    "Please fill in all required fields."
+            );
+
+            projectMessage.setTextFill(
+                    Color.web("#F87171")
+            );
+
+            return;
+        }
+
+
+        Project project = new Project(
+                title,
+                description,
+                technology,
+                github
+        );
+
+
+        projectMessage.setText(
+                "Project added: " + project.getTitle()
+        );
+
+        projectMessage.setTextFill(
+                Color.web("#38BDF8")
+        );
+
+
+        // Clear form
+        titleField.clear();
+        descriptionField.clear();
+        technologyField.clear();
+        githubField.clear();
+    }
+
+
+    // ==========================================
+    // NAVIGATION
+    // ==========================================
 
     @FXML
     private void showDashboard() {
@@ -151,10 +243,6 @@ public class DashboardController {
 
         welcome.setText(
                 "Welcome back! Here's an overview of your portfolio."
-        );
-
-        pageDescription.setText(
-                "Manage your projects, skills, notes and tasks from one place."
         );
     }
 
@@ -165,11 +253,7 @@ public class DashboardController {
         pageTitle.setText("Projects");
 
         welcome.setText(
-                "Manage your coding projects."
-        );
-
-        pageDescription.setText(
-                "Add, edit and organize your portfolio projects."
+                "Add a new project to your portfolio."
         );
     }
 
@@ -182,10 +266,6 @@ public class DashboardController {
         welcome.setText(
                 "Track your technical skills."
         );
-
-        pageDescription.setText(
-                "Organize programming languages, tools and technologies."
-        );
     }
 
 
@@ -196,10 +276,6 @@ public class DashboardController {
 
         welcome.setText(
                 "Keep your important development notes."
-        );
-
-        pageDescription.setText(
-                "Store ideas, learning notes and useful information."
         );
     }
 
@@ -212,10 +288,6 @@ public class DashboardController {
         welcome.setText(
                 "Manage your development tasks."
         );
-
-        pageDescription.setText(
-                "Keep track of things you need to complete."
-        );
     }
 
 
@@ -227,10 +299,6 @@ public class DashboardController {
         welcome.setText(
                 "External data and API information."
         );
-
-        pageDescription.setText(
-                "This section will later connect to a JSON/API service."
-        );
     }
 
 
@@ -241,10 +309,6 @@ public class DashboardController {
 
         welcome.setText(
                 "Application settings."
-        );
-
-        pageDescription.setText(
-                "Customize your DevFolio application."
         );
     }
 }

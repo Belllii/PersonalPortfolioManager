@@ -3,6 +3,8 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -63,7 +65,7 @@
     <center>
 
         <VBox fx:id="content"
-              spacing="20">
+              spacing="15">
 
             <padding>
                 <Insets top="35" right="35" bottom="35" left="35"/>
@@ -72,13 +74,37 @@
             <children>
 
                 <Label fx:id="pageTitle"
-                       text="Dashboard"/>
+                       text="Projects"/>
 
                 <Label fx:id="welcome"
-                       text="Welcome back! Here's an overview of your portfolio."/>
+                       text="Add a new project to your portfolio."/>
 
-                <Label fx:id="pageDescription"
-                       text="Manage your projects, skills, notes and tasks from one place."/>
+                <Label text="Project Title"/>
+
+                <TextField fx:id="titleField"
+                           promptText="Enter project title"/>
+
+                <Label text="Description"/>
+
+                <TextArea fx:id="descriptionField"
+                          promptText="Describe your project"
+                          prefHeight="100"/>
+
+                <Label text="Technology"/>
+
+                <TextField fx:id="technologyField"
+                           promptText="Example: Java, C++, Arduino"/>
+
+                <Label text="GitHub Link"/>
+
+                <TextField fx:id="githubField"
+                           promptText="Enter GitHub repository link"/>
+
+                <Button fx:id="addProjectButton"
+                        text="Add Project"
+                        onAction="#addProject"/>
+
+                <Label fx:id="projectMessage"/>
 
             </children>
 
