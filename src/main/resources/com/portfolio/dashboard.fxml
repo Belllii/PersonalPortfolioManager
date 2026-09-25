@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
@@ -26,13 +27,33 @@
                 <Label fx:id="menuTitle"
                        text="MAIN MENU"/>
 
-                <Label text="⌂   Dashboard"/>
-                <Label text="▣   Projects"/>
-                <Label text="★   Skills"/>
-                <Label text="▤   Notes"/>
-                <Label text="✓   Tasks"/>
-                <Label text="↗   API Data"/>
-                <Label text="⚙   Settings"/>
+                <Button fx:id="dashboardButton"
+                        text="⌂   Dashboard"
+                        onAction="#showDashboard"/>
+
+                <Button fx:id="projectsButton"
+                        text="▣   Projects"
+                        onAction="#showProjects"/>
+
+                <Button fx:id="skillsButton"
+                        text="★   Skills"
+                        onAction="#showSkills"/>
+
+                <Button fx:id="notesButton"
+                        text="▤   Notes"
+                        onAction="#showNotes"/>
+
+                <Button fx:id="tasksButton"
+                        text="✓   Tasks"
+                        onAction="#showTasks"/>
+
+                <Button fx:id="apiButton"
+                        text="↗   API Data"
+                        onAction="#showApi"/>
+
+                <Button fx:id="settingsButton"
+                        text="⚙   Settings"
+                        onAction="#showSettings"/>
 
             </children>
 
@@ -55,6 +76,9 @@
 
                 <Label fx:id="welcome"
                        text="Welcome back! Here's an overview of your portfolio."/>
+
+                <Label fx:id="pageDescription"
+                       text="Manage your projects, skills, notes and tasks from one place."/>
 
             </children>
 
