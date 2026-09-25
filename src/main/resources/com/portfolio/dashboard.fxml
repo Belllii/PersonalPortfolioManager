@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.portfolio.DashboardController">
+
+    <left>
+        <VBox fx:id="sidebar"
+              spacing="15"
+              prefWidth="220">
+
+            <padding>
+                <Insets top="30" right="20" bottom="30" left="20"/>
+            </padding>
+
+            <children>
+
+                <Label fx:id="logo"
+                       text="DEVFOLIO"/>
+
+                <Label fx:id="menuTitle"
+                       text="MAIN MENU"/>
+
+                <Label text="⌂   Dashboard"/>
+                <Label text="▣   Projects"/>
+                <Label text="★   Skills"/>
+                <Label text="▤   Notes"/>
+                <Label text="✓   Tasks"/>
+                <Label text="↗   API Data"/>
+                <Label text="⚙   Settings"/>
+
+            </children>
+
+        </VBox>
+    </left>
+
+    <center>
+
+        <VBox fx:id="content"
+              spacing="20">
+
+            <padding>
+                <Insets top="35" right="35" bottom="35" left="35"/>
+            </padding>
+
+            <children>
+
+                <Label fx:id="pageTitle"
+                       text="Dashboard"/>
+
+                <Label fx:id="welcome"
+                       text="Welcome back! Here's an overview of your portfolio."/>
+
+            </children>
+
+        </VBox>
+
+    </center>
+
+</BorderPane>
