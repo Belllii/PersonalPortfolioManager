@@ -10,11 +10,14 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import com.portfolio.database.Database;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+
+        Database.createTables();
 
         FXMLLoader loader = new FXMLLoader(
                 Main.class.getResource("/com/portfolio/dashboard.fxml")

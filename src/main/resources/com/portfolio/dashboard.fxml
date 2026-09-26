@@ -88,23 +88,27 @@
                 <Label fx:id="welcome"
                        text="Add a new project to your portfolio."/>
 
-                <Label text="Project Title"/>
+                <Label fx:id="projectTitleLabel"
+                       text="Project Title"/>
 
                 <TextField fx:id="titleField"
                            promptText="Enter project title"/>
 
-                <Label text="Description"/>
+                <Label fx:id="descriptionLabel"
+                       text="Description"/>
 
                 <TextArea fx:id="descriptionField"
                           promptText="Describe your project"
                           prefHeight="80"/>
 
-                <Label text="Technology"/>
+                <Label fx:id="technologyLabel"
+                       text="Technology"/>
 
                 <TextField fx:id="technologyField"
                            promptText="Example: Java, C++, Arduino"/>
 
-                <Label text="GitHub Link"/>
+                <Label fx:id="githubLabel"
+                       text="GitHub Link"/>
 
                 <TextField fx:id="githubField"
                            promptText="Enter GitHub repository link"/>
@@ -115,7 +119,8 @@
 
                 <Label fx:id="projectMessage"/>
 
-                <Label text="My Projects"/>
+                <Label fx:id="myProjectsLabel"
+                       text="My Projects"/>
 
                 <TableView fx:id="projectTable"
                            prefHeight="250">
