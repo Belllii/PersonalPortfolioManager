@@ -32,7 +32,8 @@ public class Database {
 
 
         try (Connection connection = connect();
-             Statement statement = connection.createStatement()) {
+             Statement statement =
+                     connection.createStatement()) {
 
             statement.execute(sql);
 

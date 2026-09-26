@@ -1,56 +1,51 @@
 package com.portfolio;
 
+import com.portfolio.database.Database;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import com.portfolio.database.Database;
 
 public class Main extends Application {
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
 
         Database.createTables();
 
-        FXMLLoader loader = new FXMLLoader(
-                Main.class.getResource("/com/portfolio/dashboard.fxml")
-        );
+        try {
 
-        BorderPane root = loader.load();
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            Main.class.getResource(
+                                    "/com/portfolio/dashboard.fxml"
+                            )
+                    );
 
-        root.setBackground(
-                new Background(
-                        new BackgroundFill(
-                                Color.web("#0F172A"),
-                                CornerRadii.EMPTY,
-                                Insets.EMPTY
-                        )
-                )
-        );
+            Scene scene =
+                    new Scene(
+                            loader.load(),
+                            1200,
+                            750
+                    );
 
-        Scene scene = new Scene(
-                root,
-                1100,
-                700
-        );
+            stage.setTitle(
+                    "DevFolio - Personal Portfolio Manager"
+            );
 
-        stage.setTitle("DevFolio - Personal Portfolio Manager");
-        stage.setScene(scene);
+            stage.setScene(scene);
 
-        stage.setMinWidth(900);
-        stage.setMinHeight(600);
+            stage.show();
 
-        stage.show();
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
     }
 
+
     public static void main(String[] args) {
-        launch(args);
+
+        launch();
     }
 }

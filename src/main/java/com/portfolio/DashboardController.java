@@ -1,5 +1,7 @@
 package com.portfolio;
 
+import com.portfolio.database.ProjectDAO;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,10 +21,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import com.portfolio.database.ProjectDAO;
-
 
 public class DashboardController {
+
 
     // ==========================================
     // SIDEBAR
@@ -71,12 +72,7 @@ public class DashboardController {
 
     @FXML
     private Label welcome;
-
-
-    // ==========================================
     // PROJECT FORM
-    // ==========================================
-
     @FXML
     private Label projectTitleLabel;
 
@@ -112,12 +108,7 @@ public class DashboardController {
 
     @FXML
     private Label projectMessage;
-
-
-    // ==========================================
     // PROJECT TABLE
-    // ==========================================
-
     @FXML
     private Label myProjectsLabel;
 
@@ -132,11 +123,7 @@ public class DashboardController {
 
     @FXML
     private TableColumn<Project, String> githubColumn;
-
-
-    // ==========================================
     // PROJECT DETAILS
-    // ==========================================
 
     @FXML
     private Label detailTitle;
@@ -150,58 +137,37 @@ public class DashboardController {
     @FXML
     private Label detailGithub;
 
-
-    // ==========================================
-    // PROJECT LIST
-    // ==========================================
-
-    private ObservableList<Project> projectList =
+    // DATA
+    private final ObservableList<Project> projectList =
             FXCollections.observableArrayList();
+    private final ProjectDAO projectDAO =
+            new ProjectDAO();
 
-    private final ProjectDAO projectDAO = new ProjectDAO();
-    // ==========================================
     // INITIALIZE
-    // ==========================================
-
     @FXML
     public void initialize() {
-
+        // Background
         sidebar.setBackground(
                 new Background(
-                        new BackgroundFill(
-                                Color.web("#020617"),
-                                CornerRadii.EMPTY,
-                                Insets.EMPTY
-                        )   )   );
+                        new BackgroundFill(Color.web("#020617"), CornerRadii.EMPTY, Insets.EMPTY)));
         content.setBackground(
                 new Background(
                         new BackgroundFill(
                                 Color.web("#0F172A"),
                                 CornerRadii.EMPTY,
-                                Insets.EMPTY
-                        )
-                )
-        );
+                                Insets.EMPTY)));
         // Logo
         logo.setFont(
-                Font.font("Arial", FontWeight.BOLD, 25)
-        );
-
-        logo.setTextFill(
-                Color.web("#38BDF8")
-        );
-
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        25));
+        logo.setTextFill(Color.web("#38BDF8"));
         // Menu title
         menuTitle.setFont(
-                Font.font("Arial", FontWeight.BOLD, 11)
-        );
-
-        menuTitle.setTextFill(
-                Color.web("#94A3B8")
-        );
-
+                Font.font("Arial", FontWeight.BOLD, 11));
+        menuTitle.setTextFill(Color.web("#94A3B8"));
         // Sidebar buttons
-
         setupButton(dashboardButton);
         setupButton(projectsButton);
         setupButton(skillsButton);
@@ -209,24 +175,26 @@ public class DashboardController {
         setupButton(tasksButton);
         setupButton(apiButton);
         setupButton(settingsButton);
-
         // Page title
-
         pageTitle.setFont(
-                Font.font("Arial", FontWeight.BOLD, 30)
-        );
-
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        30));
         pageTitle.setTextFill(
                 Color.WHITE
         );
 
 
         // ------------------------------------------
-        // Welcome text
+        // Welcome
         // ------------------------------------------
 
         welcome.setFont(
-                Font.font("Arial", 16)
+                Font.font(
+                        "Arial",
+                        16
+                )
         );
 
         welcome.setTextFill(
@@ -245,11 +213,15 @@ public class DashboardController {
 
 
         // ------------------------------------------
-        // My Projects label
+        // My Projects
         // ------------------------------------------
 
         myProjectsLabel.setFont(
-                Font.font("Arial", FontWeight.BOLD, 18)
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        18
+                )
         );
 
         myProjectsLabel.setTextFill(
@@ -269,47 +241,18 @@ public class DashboardController {
 
 
         // ------------------------------------------
-        // Add button
+        // Buttons
         // ------------------------------------------
 
         setupActionButton(addProjectButton);
 
-
-        // ------------------------------------------
-        // Update button
-        // ------------------------------------------
-
         setupActionButton(updateProjectButton);
 
-
-        // ------------------------------------------
-        // Delete button
-        // ------------------------------------------
-
-        deleteProjectButton.setPrefWidth(150);
-        deleteProjectButton.setPrefHeight(40);
-
-        deleteProjectButton.setFont(
-                Font.font("Arial", FontWeight.BOLD, 13)
-        );
-
-        deleteProjectButton.setTextFill(
-                Color.WHITE
-        );
-
-        deleteProjectButton.setBackground(
-                new Background(
-                        new BackgroundFill(
-                                Color.web("#DC2626"),
-                                new CornerRadii(8),
-                                Insets.EMPTY
-                        )
-                )
-        );
+        setupDeleteButton(deleteProjectButton);
 
 
         // ------------------------------------------
-        // Project message
+        // Message
         // ------------------------------------------
 
         projectMessage.setTextFill(
@@ -318,7 +261,7 @@ public class DashboardController {
 
 
         // ==========================================
-        // TABLEVIEW
+        // TABLE
         // ==========================================
 
         titleColumn.setCellValueFactory(
@@ -333,59 +276,38 @@ public class DashboardController {
                 new PropertyValueFactory<>("githubLink")
         );
 
-        projectTable.setItems(projectList);
-        loadProjects();
+
+        projectTable.setItems(
+                projectList
+        );
+
 
         // ==========================================
-        // PROJECT SELECTION
+        // LOAD DATABASE PROJECTS
+        // ==========================================
+
+        loadProjects();
+
+
+        // ==========================================
+        // TABLE SELECTION
         // ==========================================
 
         projectTable.getSelectionModel()
                 .selectedItemProperty()
                 .addListener(
-                        (observable, oldProject, selectedProject) -> {
+                        (observable,
+                         oldProject,
+                         selectedProject) -> {
 
                             if (selectedProject != null) {
 
-                                // Show details
-
-                                detailTitle.setText(
-                                        "Title: "
-                                                + selectedProject.getTitle()
+                                showProjectDetails(
+                                        selectedProject
                                 );
 
-                                detailTechnology.setText(
-                                        "Technology: "
-                                                + selectedProject.getTechnology()
-                                );
-
-                                detailDescription.setText(
-                                        "Description: "
-                                                + selectedProject.getDescription()
-                                );
-
-                                detailGithub.setText(
-                                        "GitHub: "
-                                                + selectedProject.getGithubLink()
-                                );
-
-
-                                // Load data into form
-
-                                titleField.setText(
-                                        selectedProject.getTitle()
-                                );
-
-                                descriptionField.setText(
-                                        selectedProject.getDescription()
-                                );
-
-                                technologyField.setText(
-                                        selectedProject.getTechnology()
-                                );
-
-                                githubField.setText(
-                                        selectedProject.getGithubLink()
+                                loadProjectIntoForm(
+                                        selectedProject
                                 );
                             }
                         }
@@ -394,368 +316,309 @@ public class DashboardController {
 
 
     // ==========================================
-    // FORM LABEL STYLE
+    // LOAD PROJECTS
     // ==========================================
 
-    private void setupFormLabel(Label label) {
+    private void loadProjects() {
 
-        label.setFont(
-                Font.font("Arial", FontWeight.BOLD, 13)
-        );
+        projectList.clear();
 
-        label.setTextFill(
-                Color.web("#E2E8F0")
+        projectList.addAll(
+                projectDAO.getAllProjects()
         );
     }
 
 
     // ==========================================
-    // TEXT FIELD STYLE
+    // SHOW PROJECT DETAILS
     // ==========================================
 
-    private void setupTextField(TextField field) {
+    private void showProjectDetails(
+            Project project) {
 
-        field.setPrefHeight(38);
 
-        field.setFont(
-                Font.font("Arial", 14)
+        detailTitle.setText(
+                "Title: "
+                        + project.getTitle()
         );
 
+
+        detailTechnology.setText(
+                "Technology: "
+                        + project.getTechnology()
+        );
+
+
+        detailDescription.setText(
+                "Description: "
+                        + project.getDescription()
+        );
+
+
+        detailGithub.setText(
+                "GitHub: "
+                        + project.getGithubLink()
+        );
+    }
+
+
+    // ==========================================
+    // LOAD PROJECT INTO FORM
+    // ==========================================
+
+    private void loadProjectIntoForm(
+            Project project) {
+
+
+        titleField.setText(
+                project.getTitle()
+        );
+
+
+        descriptionField.setText(
+                project.getDescription()
+        );
+
+
+        technologyField.setText(
+                project.getTechnology()
+        );
+
+
+        githubField.setText(
+                project.getGithubLink()
+        );
+    }
+    // ADD PROJECT
+    @FXML
+    private void addProject() {
+        String title =
+                titleField.getText().trim();
+        String description =
+                descriptionField
+                        .getText()
+                        .trim();
+        String technology =
+                technologyField
+                        .getText()
+                        .trim();
+        String github =
+                githubField
+                        .getText()
+                        .trim();
+        // Validate
+        if (title.isEmpty()
+                || description.isEmpty()
+                || technology.isEmpty()) {
+            showError("Please fill in all required fields.");
+            return;
+        }// Create object
+        Project project =
+                new Project(title, description, technology, github);
+        // Save to database
+        projectDAO.insertProject(project);
+        // Reload table
+        loadProjects();
+        // Message
+        showSuccess("Project added successfully.");
+
+        clearForm();
+    }
+    // UPDATE PROJECT
+    @FXML
+    private void updateProject() {
+        Project selectedProject =
+                projectTable
+                        .getSelectionModel()
+                        .getSelectedItem();
+        if (selectedProject == null) {
+            showError("Please select a project first.");
+            return;
+        }
+        String title =
+                titleField.getText().trim();
+        String description =
+                descriptionField
+                        .getText()
+                        .trim();
+        String technology =
+                technologyField
+                        .getText()
+                        .trim();
+        String github =
+                githubField
+                        .getText()
+                        .trim();
+        // Validate
+        if (title.isEmpty()
+                || description.isEmpty()
+                || technology.isEmpty()) {
+            showError("Please fill in all required fields.");
+            return;
+        }
+        // Update object
+        selectedProject.setTitle(title);
+        selectedProject.setDescription(description);
+        selectedProject.setTechnology(technology);
+        selectedProject.setGithubLink(
+                github);
+        // Update database
+        projectDAO.updateProject(
+                selectedProject.getId(),
+                selectedProject);
+        // Reload table
+        loadProjects();
+        showSuccess(
+                "Project updated successfully.");
+        clearForm();
+    }// DELETE PROJECT
+    @FXML
+    private void deleteProject() {
+        Project selectedProject =
+                projectTable
+                        .getSelectionModel()
+                        .getSelectedItem();
+        if (selectedProject == null) {
+            showError("Please select a project first.");
+            return;
+        }
+        // Delete from database
+        projectDAO.deleteProject(
+                selectedProject.getId());
+        // Delete from table
+        projectList.remove(selectedProject);
+        showSuccess("Project deleted successfully.");
+        clearForm();
+        clearDetails();
+    }
+    // CLEAR FORM
+    private void clearForm() {
+        titleField.clear();
+        descriptionField.clear();
+        technologyField.clear();
+        githubField.clear();
+    }
+    // CLEAR DETAILS
+    private void clearDetails() {
+        detailTitle.setText("No project selected");
+        detailTechnology.setText("");
+        detailDescription.setText("");
+        detailGithub.setText("");
+    }
+    // SUCCESS MESSAGE
+    private void showSuccess(
+            String message) {
+        projectMessage.setText(
+                message);
+        projectMessage.setTextFill(
+                Color.web("#38BDF8"));
+    }
+    // ERROR MESSAGE
+
+    private void showError(
+            String message) {
+        projectMessage.setText(
+                message);
+        projectMessage.setTextFill(
+                Color.web("#F87171"));
+    }
+    // FORM LABEL STYLE
+    private void setupFormLabel(
+            Label label) {
+        label.setFont(
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        13));
+        label.setTextFill(
+                Color.web("#E2E8F0"));
+    }
+    // TEXT FIELD STYLE
+    private void setupTextField(
+            TextField field) {
+        field.setPrefHeight(38);
+        field.setFont(
+                Font.font(
+                        "Arial",
+                        14));
         field.setBackground(
                 new Background(
                         new BackgroundFill(
                                 Color.WHITE,
                                 new CornerRadii(7),
-                                Insets.EMPTY
-                        )
-                )
-        );
+                                Insets.EMPTY)));
     }
-
-
-    // ==========================================
     // TEXT AREA STYLE
-    // ==========================================
-
-    private void setupTextArea(TextArea area) {
-
+    private void setupTextArea(
+            TextArea area) {
         area.setFont(
-                Font.font("Arial", 14)
-        );
-
+                Font.font(
+                        "Arial",
+                        14));
         area.setBackground(
                 new Background(
                         new BackgroundFill(
                                 Color.WHITE,
                                 new CornerRadii(7),
-                                Insets.EMPTY
-                        )
-                )
-        );
+                                Insets.EMPTY)));
     }
-
-
-    // ==========================================
     // SIDEBAR BUTTON STYLE
-    // ==========================================
-
-    private void setupButton(Button button) {
-
+    private void setupButton(
+            Button button) {
         button.setPrefWidth(180);
-
         button.setPrefHeight(42);
-
-        button.setAlignment(
-                Pos.CENTER_LEFT
-        );
-
+        button.setAlignment(Pos.CENTER_LEFT);
         button.setFont(
-                Font.font("Arial", FontWeight.BOLD, 13)
-        );
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        13));
 
-        button.setTextFill(
-                Color.WHITE
-        );
-
+        button.setTextFill(Color.WHITE);
         button.setBackground(
                 new Background(
                         new BackgroundFill(
                                 Color.web("#111827"),
                                 new CornerRadii(8),
-                                Insets.EMPTY
-                        )
-                )
-        );
+                                Insets.EMPTY)));
     }
-
-
-    // ==========================================
     // ACTION BUTTON STYLE
-    // ==========================================
-
-    private void setupActionButton(Button button) {
-
+    private void setupActionButton(
+            Button button) {
         button.setPrefWidth(150);
-
         button.setPrefHeight(40);
-
         button.setFont(
-                Font.font("Arial", FontWeight.BOLD, 13)
-        );
-
-        button.setTextFill(
-                Color.WHITE
-        );
-
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        13));
+        button.setTextFill(Color.WHITE);
         button.setBackground(
                 new Background(
                         new BackgroundFill(
                                 Color.web("#2563EB"),
                                 new CornerRadii(8),
-                                Insets.EMPTY
-                        )
-                )
-        );
+                                Insets.EMPTY)));}
+    // DELETE BUTTON STYLE
+    private void setupDeleteButton(
+            Button button) {
+        button.setPrefWidth(150);
+        button.setPrefHeight(40);
+        button.setFont(
+                Font.font("Arial", FontWeight.BOLD, 13));
+        button.setTextFill(Color.WHITE);
+        button.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#DC2626"),
+                                new CornerRadii(8),
+                                Insets.EMPTY)));
     }
-
-
-    // ==========================================
-    // ADD PROJECT
-    // ==========================================
-
-    @FXML
-    private void addProject() {
-
-        String title =
-                titleField.getText().trim();
-
-        String description =
-                descriptionField.getText().trim();
-
-        String technology =
-                technologyField.getText().trim();
-
-        String github =
-                githubField.getText().trim();
-
-
-        if (title.isEmpty()
-                || description.isEmpty()
-                || technology.isEmpty()) {
-
-            projectMessage.setText(
-                    "Please fill in all required fields."
-            );
-
-            projectMessage.setTextFill(
-                    Color.web("#F87171")
-            );
-
-            return;
-        }
-
-
-        Project project = new Project(
-                title,
-                description,
-                technology,
-                github
-        );
-
-        projectDAO.insertProject(project);
-        projectList.add(project);
-
-        projectMessage.setText(
-                "Project added: " + project.getTitle()
-        );
-
-        projectMessage.setTextFill(
-                Color.web("#38BDF8")
-        );
-
-
-        clearForm();
-    }
-
-
-    // ==========================================
-    // UPDATE PROJECT
-    // ==========================================
-
-    @FXML
-    private void updateProject() {
-
-        Project selectedProject =
-                projectTable
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-
-        if (selectedProject == null) {
-
-            projectMessage.setText(
-                    "Please select a project first."
-            );
-
-            projectMessage.setTextFill(
-                    Color.web("#F87171")
-            );
-
-            return;
-        }
-
-
-        String title =
-                titleField.getText().trim();
-
-        String description =
-                descriptionField.getText().trim();
-
-        String technology =
-                technologyField.getText().trim();
-
-        String github =
-                githubField.getText().trim();
-
-
-        if (title.isEmpty()
-                || description.isEmpty()
-                || technology.isEmpty()) {
-
-            projectMessage.setText(
-                    "Please fill in all required fields."
-            );
-
-            projectMessage.setTextFill(
-                    Color.web("#F87171")
-            );
-
-            return;
-        }
-
-
-        selectedProject.setTitle(title);
-
-        selectedProject.setDescription(description);
-
-        selectedProject.setTechnology(technology);
-
-        selectedProject.setGithubLink(github);
-
-
-        projectTable.refresh();
-
-
-        detailTitle.setText(
-                "Title: " + title
-        );
-
-        detailTechnology.setText(
-                "Technology: " + technology
-        );
-
-        detailDescription.setText(
-                "Description: " + description
-        );
-
-        detailGithub.setText(
-                "GitHub: " + github
-        );
-
-
-        projectMessage.setText(
-                "Project updated successfully."
-        );
-
-        projectMessage.setTextFill(
-                Color.web("#38BDF8")
-        );
-    }
-
-
-    // ==========================================
-    // DELETE PROJECT
-    // ==========================================
-
-    @FXML
-    private void deleteProject() {
-
-        Project selectedProject =
-                projectTable
-                        .getSelectionModel()
-                        .getSelectedItem();
-
-
-        if (selectedProject == null) {
-
-            projectMessage.setText(
-                    "Please select a project first."
-            );
-
-            projectMessage.setTextFill(
-                    Color.web("#F87171")
-            );
-
-            return;
-        }
-
-
-        projectList.remove(
-                selectedProject
-        );
-
-
-        projectMessage.setText(
-                "Project deleted successfully."
-        );
-
-        projectMessage.setTextFill(
-                Color.web("#38BDF8")
-        );
-
-
-        clearForm();
-
-
-        detailTitle.setText(
-                "No project selected"
-        );
-
-        detailTechnology.setText("");
-
-        detailDescription.setText("");
-
-        detailGithub.setText("");
-    }
-
-
-    // ==========================================
-    // CLEAR FORM
-    // ==========================================
-
-    private void clearForm() {
-
-        titleField.clear();
-
-        descriptionField.clear();
-
-        technologyField.clear();
-
-        githubField.clear();
-    }
-
-
-    // ==========================================
     // NAVIGATION
-    // ==========================================
-
     @FXML
     private void showDashboard() {
-
         pageTitle.setText(
-                "Dashboard"
-        );
-
+                "Dashboard");
         welcome.setText(
                 "Welcome back! Here's an overview of your portfolio."
         );
@@ -773,77 +636,39 @@ public class DashboardController {
                 "Add, update and manage your portfolio projects."
         );
     }
-
-
     @FXML
     private void showSkills() {
 
         pageTitle.setText(
-                "Skills"
-        );
-
+                "Skills");
         welcome.setText(
-                "Track your technical skills."
-        );
+                "Track your technical skills.");
     }
-
-
     @FXML
     private void showNotes() {
-
         pageTitle.setText(
-                "Notes"
-        );
-
+                "Notes");
         welcome.setText(
-                "Keep your important development notes."
-        );
+                "Keep your important development notes.");
     }
-
-
     @FXML
     private void showTasks() {
-
         pageTitle.setText(
-                "Tasks"
-        );
-
+                "Tasks");
         welcome.setText(
-                "Manage your development tasks."
-        );
-    }
-
-
+                "Manage your development tasks.");}
     @FXML
     private void showApi() {
-
         pageTitle.setText(
-                "API Data"
-        );
-
+                "API Data");
         welcome.setText(
-                "External data and API information."
-        );
+                "External data and API information.");
     }
-
-
     @FXML
     private void showSettings() {
-
         pageTitle.setText(
-                "Settings"
-        );
-
+                "Settings");
         welcome.setText(
-                "Application settings."
-        );
-    }
-    private void loadProjects() {
-
-        projectList.clear();
-
-        projectList.addAll(
-                projectDAO.getAllProjects()
-        );
+                "Application settings.");
     }
 }
