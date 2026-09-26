@@ -33,10 +33,10 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
-
+import javafx.concurrent.Task;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
@@ -98,7 +98,17 @@ public class DashboardController {
     @FXML
     private Label welcome;
 
+    @FXML
+    private Button fetchApiButton;
 
+    @FXML
+    private TextArea apiResultArea;
+
+    @FXML
+    private ProgressBar apiProgress;
+
+    private final ApiService apiService =
+            new ApiService();
     // =========================================================
     // PROJECT FORM
     // =========================================================
@@ -240,7 +250,63 @@ public class DashboardController {
     private final ProjectDAO projectDAO =
             new ProjectDAO();
 
+// =========================================================
+// COMMIT 15 - HTTP + JSON
+// =========================================================
 
+    @FXML
+    private void fetchApiData() {
+
+        apiResultArea.setText(
+                "Fetching data from API..."
+        );
+
+        apiProgress.setProgress(
+                ProgressIndicator.INDETERMINATE_PROGRESS
+        );
+
+        Task<String> task =
+                new Task<>() {
+
+                    @Override
+                    protected String call()
+                            throws Exception {
+
+                        return apiService.fetchData();
+                    }
+                };
+
+        task.setOnSucceeded(event -> {
+
+            apiResultArea.setText(
+                    task.getValue()
+            );
+
+            apiProgress.setProgress(
+                    1
+            );
+        });
+
+        task.setOnFailed(event -> {
+
+            apiResultArea.setText(
+                    "Failed to fetch API data.\n\n"
+                            + task.getException()
+                            .getMessage()
+            );
+
+            apiProgress.setProgress(
+                    0
+            );
+        });
+
+        Thread thread =
+                new Thread(task);
+
+        thread.setDaemon(true);
+
+        thread.start();
+    }
     // =========================================================
     // INITIALIZE
     // =========================================================
@@ -1285,9 +1351,9 @@ public class DashboardController {
                             .subtract(20)
             );
 
-            projectTable.prefHeightProperty().bind(
-                    content.heightProperty()
-                            .multiply(0.35)
+            projectTable.prefWidthProperty().bind(
+                    content.widthProperty()
+                            .subtract(20)
             );
         }
     }

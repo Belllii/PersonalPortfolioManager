@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+        <?import javafx.geometry.Insets?>
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.image.ImageView?>
+        <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.portfolio.DashboardController">
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- ===================================================== -->
+    <!-- SIDEBAR -->
+    <!-- ===================================================== -->
 
     <left>
 
@@ -35,6 +37,7 @@
                        text="Personal Portfolio Manager"/>
 
             </VBox>
+
 
             <!-- NAVIGATION -->
 
@@ -83,415 +86,467 @@
     </left>
 
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- ===================================================== -->
+    <!-- MAIN CONTENT -->
+    <!-- ===================================================== -->
 
     <center>
 
-        <VBox fx:id="content"
-              spacing="15">
-
-            <padding>
-                <Insets top="20"
-                        right="25"
-                        bottom="20"
-                        left="25"/>
-            </padding>
-
-
-            <!-- ================= MENU BAR ================= -->
-
-            <MenuBar>
-
-                <Menu text="File">
-
-                    <MenuItem text="Choose Profile Image"
-                              onAction="#chooseImage"/>
-
-                    <SeparatorMenuItem/>
-
-                    <MenuItem text="Exit"
-                              onAction="#exitApplication"/>
-
-                </Menu>
-
-
-                <Menu text="View">
-
-                    <MenuItem text="Dashboard"
-                              onAction="#showDashboard"/>
-
-                    <MenuItem text="Projects"
-                              onAction="#showProjects"/>
-
-                    <MenuItem text="Settings"
-                              onAction="#showSettings"/>
-
-                </Menu>
-
-
-                <Menu text="Help">
-
-                    <MenuItem text="About"
-                              onAction="#showAbout"/>
-
-                </Menu>
-
-            </MenuBar>
-
-
-            <!-- ================= HEADER ================= -->
-
-            <HBox spacing="15"
-                  alignment="CENTER_LEFT">
-
-                <ImageView fx:id="profileImage"
-                           fitWidth="80"
-                           fitHeight="80"
-                           preserveRatio="true"/>
-
-                <VBox spacing="5"
-                      HBox.hgrow="ALWAYS">
-
-                    <Label fx:id="pageTitle"
-                           text="Dashboard"/>
-
-                    <Label fx:id="welcome"
-                           text="Welcome to your personal portfolio manager"/>
-
-                </VBox>
-
-            </HBox>
-
-
-            <Separator/>
-
-
-            <!-- ================= PROJECT FORM ================= -->
-
-            <VBox spacing="10">
-
-                <Label fx:id="projectFormTitle"
-                       text="Add / Edit Project"/>
-
-
-                <GridPane hgap="10"
-                          vgap="10">
-
-                    <columnConstraints>
-
-                        <ColumnConstraints percentWidth="18"/>
-
-                        <ColumnConstraints percentWidth="82"
-                                           hgrow="ALWAYS"/>
-
-                    </columnConstraints>
-
-
-                    <!-- TITLE -->
-
-                    <Label fx:id="projectTitleLabel"
-                           text="Title:"
-                           GridPane.rowIndex="0"
-                           GridPane.columnIndex="0"/>
-
-                    <TextField fx:id="titleField"
-                               promptText="Project title"
-                               maxWidth="Infinity"
-                               GridPane.rowIndex="0"
-                               GridPane.columnIndex="1"/>
-
-
-                    <!-- DESCRIPTION -->
-
-                    <Label fx:id="descriptionLabel"
-                           text="Description:"
-                           GridPane.rowIndex="1"
-                           GridPane.columnIndex="0"/>
-
-                    <TextArea fx:id="descriptionField"
-                              promptText="Project description"
-                              prefRowCount="2"
-                              maxWidth="Infinity"
-                              GridPane.rowIndex="1"
-                              GridPane.columnIndex="1"/>
-
-
-                    <!-- TECHNOLOGY -->
-
-                    <Label fx:id="technologyLabel"
-                           text="Technology:"
-                           GridPane.rowIndex="2"
-                           GridPane.columnIndex="0"/>
-
-                    <!-- IMPORTANT:
-                         This TextField is required by the
-                         existing Project CRUD controller. -->
-
-                    <TextField fx:id="technologyField"
-                               promptText="Technology"
-                               maxWidth="Infinity"
-                               GridPane.rowIndex="2"
-                               GridPane.columnIndex="1"/>
-
-
-                    <!-- GITHUB -->
-
-                    <Label fx:id="githubLabel"
-                           text="GitHub:"
-                           GridPane.rowIndex="3"
-                           GridPane.columnIndex="0"/>
-
-                    <TextField fx:id="githubField"
-                               promptText="GitHub repository link"
-                               maxWidth="Infinity"
-                               GridPane.rowIndex="3"
-                               GridPane.columnIndex="1"/>
-
-                </GridPane>
-
-
-                <!-- BUTTONS -->
-
-                <HBox spacing="10">
-
-                    <Button fx:id="addProjectButton"
-                            text="Add Project"
-                            onAction="#addProject"/>
-
-                    <Button fx:id="updateProjectButton"
-                            text="Update"
-                            onAction="#updateProject"/>
-
-                    <Button fx:id="deleteProjectButton"
-                            text="Delete"
-                            onAction="#deleteProject"/>
-
-                    <Region HBox.hgrow="ALWAYS"/>
-
-                    <Label fx:id="projectMessage"/>
-
-                </HBox>
-
-            </VBox>
-
-
-            <Separator/>
-
-
-            <!-- ================= PROJECT TABLE ================= -->
-
-            <Label fx:id="myProjectsLabel"
-                   text="My Projects"/>
-
-
-            <TableView fx:id="projectTable"
-                       VBox.vgrow="ALWAYS">
-
-                <columns>
-
-                    <TableColumn fx:id="titleColumn"
-                                 text="Title"
-                                 prefWidth="250"/>
-
-                    <TableColumn fx:id="technologyColumn"
-                                 text="Technology"
-                                 prefWidth="180"/>
-
-                    <TableColumn fx:id="githubColumn"
-                                 text="GitHub"
-                                 prefWidth="300"/>
-
-                </columns>
-
-            </TableView>
-
-
-            <!-- ================= PROJECT DETAILS ================= -->
-
-            <VBox spacing="5">
-
-                <Label text="Selected Project"/>
-
-                <Label fx:id="detailTitle"/>
-
-                <Label fx:id="detailTechnology"/>
-
-                <Label fx:id="detailDescription"
-                       wrapText="true"/>
-
-                <Label fx:id="detailGithub"
-                       wrapText="true"/>
-
-            </VBox>
-
-
-            <!-- ================= PORTFOLIO TOOLS ================= -->
-
-            <TitledPane text="Portfolio Tools"
-                        expanded="false"
-                        maxWidth="Infinity">
-
-                <VBox spacing="12">
+        <ScrollPane fitToWidth="true"
+                    fitToHeight="false"
+                    hbarPolicy="NEVER"
+                    vbarPolicy="AS_NEEDED">
+
+            <content>
+
+                <VBox fx:id="content"
+                      spacing="15">
 
                     <padding>
-                        <Insets top="15"
-                                right="15"
-                                bottom="15"
-                                left="15"/>
+                        <Insets top="20"
+                                right="25"
+                                bottom="20"
+                                left="25"/>
                     </padding>
 
 
-                    <!-- COMBO BOX -->
+                    <!-- ================================================= -->
+                    <!-- MENU BAR -->
+                    <!-- ================================================= -->
 
-                    <HBox spacing="10"
+                    <MenuBar>
+
+                        <Menu text="File">
+
+                            <MenuItem text="Choose Profile Image"
+                                      onAction="#chooseImage"/>
+
+                            <SeparatorMenuItem/>
+
+                            <MenuItem text="Exit"
+                                      onAction="#exitApplication"/>
+
+                        </Menu>
+
+
+                        <Menu text="View">
+
+                            <MenuItem text="Dashboard"
+                                      onAction="#showDashboard"/>
+
+                            <MenuItem text="Projects"
+                                      onAction="#showProjects"/>
+
+                            <MenuItem text="Settings"
+                                      onAction="#showSettings"/>
+
+                        </Menu>
+
+
+                        <Menu text="Help">
+
+                            <MenuItem text="About"
+                                      onAction="#showAbout"/>
+
+                        </Menu>
+
+                    </MenuBar>
+
+
+                    <!-- ================================================= -->
+                    <!-- HEADER -->
+                    <!-- ================================================= -->
+
+                    <HBox spacing="15"
                           alignment="CENTER_LEFT">
 
-                        <Label text="Technology:"/>
+                        <ImageView fx:id="profileImage"
+                                   fitWidth="80"
+                                   fitHeight="80"
+                                   preserveRatio="true"/>
 
-                        <ComboBox fx:id="technologyComboBox"
-                                  promptText="Select technology"
-                                  maxWidth="250"/>
+                        <VBox spacing="5"
+                              HBox.hgrow="ALWAYS">
 
-                    </HBox>
+                            <Label fx:id="pageTitle"
+                                   text="Dashboard"/>
 
+                            <Label fx:id="welcome"
+                                   text="Welcome to your personal portfolio manager"
+                                   wrapText="true"/>
 
-                    <!-- CHOICE BOX -->
-
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-
-                        <Label text="Category:"/>
-
-                        <ChoiceBox fx:id="categoryChoiceBox"
-                                   prefWidth="200"/>
+                        </VBox>
 
                     </HBox>
 
 
-                    <!-- DATE PICKER -->
-
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-
-                        <Label text="Project Date:"/>
-
-                        <DatePicker fx:id="projectDatePicker"/>
-
-                    </HBox>
+                    <Separator/>
 
 
-                    <!-- RADIO BUTTONS -->
+                    <!-- ================================================= -->
+                    <!-- PROJECT FORM -->
+                    <!-- ================================================= -->
 
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
+                    <VBox spacing="10">
 
-                        <Label text="Priority:"/>
-
-                        <RadioButton fx:id="lowPriority"
-                                     text="Low"/>
-
-                        <RadioButton fx:id="mediumPriority"
-                                     text="Medium"/>
-
-                        <RadioButton fx:id="highPriority"
-                                     text="High"/>
-
-                    </HBox>
+                        <Label fx:id="projectFormTitle"
+                               text="Add / Edit Project"/>
 
 
-                    <!-- CHECK BOX -->
+                        <GridPane hgap="10"
+                                  vgap="10">
 
-                    <CheckBox fx:id="featuredCheckBox"
-                              text="Featured project"/>
+                            <columnConstraints>
 
+                                <ColumnConstraints percentWidth="18"/>
 
-                    <!-- SLIDER -->
+                                <ColumnConstraints percentWidth="82"
+                                                   hgrow="ALWAYS"/>
 
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-
-                        <Label text="Completion:"/>
-
-                        <Slider fx:id="completionSlider"
-                                min="0"
-                                max="100"
-                                value="50"
-                                HBox.hgrow="ALWAYS"/>
-
-                        <Label fx:id="completionLabel"
-                               text="50%"/>
-
-                    </HBox>
+                            </columnConstraints>
 
 
-                    <!-- SPINNER -->
+                            <!-- TITLE -->
 
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
+                            <Label fx:id="projectTitleLabel"
+                                   text="Title:"
+                                   GridPane.rowIndex="0"
+                                   GridPane.columnIndex="0"/>
 
-                        <Label text="Team Members:"/>
-
-                        <Spinner fx:id="teamSpinner"
-                                 prefWidth="100"/>
-
-                    </HBox>
-
-
-                    <!-- PASSWORD FIELD -->
-
-                    <HBox spacing="10"
-                          alignment="CENTER_LEFT">
-
-                        <Label text="Portfolio PIN:"/>
-
-                        <PasswordField fx:id="passwordField"
-                                       promptText="Enter PIN"/>
-
-                    </HBox>
+                            <TextField fx:id="titleField"
+                                       promptText="Project title"
+                                       maxWidth="Infinity"
+                                       GridPane.rowIndex="0"
+                                       GridPane.columnIndex="1"/>
 
 
-                    <!-- TREE VIEW -->
+                            <!-- DESCRIPTION -->
 
-                    <Label text="Technology Categories"/>
+                            <Label fx:id="descriptionLabel"
+                                   text="Description:"
+                                   GridPane.rowIndex="1"
+                                   GridPane.columnIndex="0"/>
 
-                    <TreeView fx:id="technologyTree"
-                              prefHeight="130"/>
-
-
-                    <!-- LIST VIEW -->
-
-                    <Label text="Selected Tools"/>
-
-                    <ListView fx:id="toolsList"
-                              prefHeight="100"/>
-
-
-                    <!-- PROGRESS BAR -->
-
-                    <Label text="Portfolio Completion"/>
-
-                    <ProgressBar fx:id="portfolioProgress"
-                                 progress="0.5"
-                                 maxWidth="Infinity"/>
+                            <TextArea fx:id="descriptionField"
+                                      promptText="Project description"
+                                      prefRowCount="2"
+                                      maxWidth="Infinity"
+                                      GridPane.rowIndex="1"
+                                      GridPane.columnIndex="1"/>
 
 
-                    <!-- FILE CHOOSER -->
+                            <!-- TECHNOLOGY -->
 
-                    <HBox spacing="10">
+                            <Label fx:id="technologyLabel"
+                                   text="Technology:"
+                                   GridPane.rowIndex="2"
+                                   GridPane.columnIndex="0"/>
 
-                        <Button text="Choose Profile Image"
-                                onAction="#chooseImage"/>
+                            <TextField fx:id="technologyField"
+                                       promptText="Technology"
+                                       maxWidth="Infinity"
+                                       GridPane.rowIndex="2"
+                                       GridPane.columnIndex="1"/>
 
-                        <Button text="Show About"
-                                onAction="#showAbout"/>
 
-                    </HBox>
+                            <!-- GITHUB -->
+
+                            <Label fx:id="githubLabel"
+                                   text="GitHub:"
+                                   GridPane.rowIndex="3"
+                                   GridPane.columnIndex="0"/>
+
+                            <TextField fx:id="githubField"
+                                       promptText="GitHub repository link"
+                                       maxWidth="Infinity"
+                                       GridPane.rowIndex="3"
+                                       GridPane.columnIndex="1"/>
+
+                        </GridPane>
+
+
+                        <!-- PROJECT BUTTONS -->
+
+                        <HBox spacing="10">
+
+                            <Button fx:id="addProjectButton"
+                                    text="Add Project"
+                                    onAction="#addProject"/>
+
+                            <Button fx:id="updateProjectButton"
+                                    text="Update"
+                                    onAction="#updateProject"/>
+
+                            <Button fx:id="deleteProjectButton"
+                                    text="Delete"
+                                    onAction="#deleteProject"/>
+
+                            <Region HBox.hgrow="ALWAYS"/>
+
+                            <Label fx:id="projectMessage"/>
+
+                        </HBox>
+
+                    </VBox>
+
+
+                    <Separator/>
+
+
+                    <!-- ================================================= -->
+                    <!-- PROJECT TABLE -->
+                    <!-- ================================================= -->
+
+                    <Label fx:id="myProjectsLabel"
+                           text="My Projects"/>
+
+
+                    <TableView fx:id="projectTable"
+                               prefHeight="260">
+
+                        <columns>
+
+                            <TableColumn fx:id="titleColumn"
+                                         text="Title"
+                                         prefWidth="250"/>
+
+                            <TableColumn fx:id="technologyColumn"
+                                         text="Technology"
+                                         prefWidth="180"/>
+
+                            <TableColumn fx:id="githubColumn"
+                                         text="GitHub"
+                                         prefWidth="300"/>
+
+                        </columns>
+
+                    </TableView>
+
+
+                    <!-- ================================================= -->
+                    <!-- PROJECT DETAILS -->
+                    <!-- ================================================= -->
+
+                    <VBox spacing="5">
+
+                        <Label text="Selected Project"/>
+
+                        <Label fx:id="detailTitle"/>
+
+                        <Label fx:id="detailTechnology"/>
+
+                        <Label fx:id="detailDescription"
+                               wrapText="true"/>
+
+                        <Label fx:id="detailGithub"
+                               wrapText="true"/>
+
+                    </VBox>
+
+
+                    <Separator/>
+
+
+                    <!-- ================================================= -->
+                    <!-- PORTFOLIO TOOLS -->
+                    <!-- ================================================= -->
+
+                    <TitledPane text="Portfolio Tools"
+                                expanded="true"
+                                maxWidth="Infinity">
+
+                        <content>
+
+                            <VBox spacing="12">
+
+                                <padding>
+                                    <Insets top="15"
+                                            right="15"
+                                            bottom="15"
+                                            left="15"/>
+                                </padding>
+
+
+                                <!-- COMBO BOX -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Technology:"/>
+
+                                    <ComboBox fx:id="technologyComboBox"
+                                              promptText="Select technology"
+                                              prefWidth="250"/>
+
+                                </HBox>
+
+
+                                <!-- CHOICE BOX -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Category:"/>
+
+                                    <ChoiceBox fx:id="categoryChoiceBox"
+                                               prefWidth="200"/>
+
+                                </HBox>
+
+
+                                <!-- DATE PICKER -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Project Date:"/>
+
+                                    <DatePicker fx:id="projectDatePicker"/>
+
+                                </HBox>
+
+
+                                <!-- RADIO BUTTONS -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Priority:"/>
+
+                                    <RadioButton fx:id="lowPriority"
+                                                 text="Low"/>
+
+                                    <RadioButton fx:id="mediumPriority"
+                                                 text="Medium"/>
+
+                                    <RadioButton fx:id="highPriority"
+                                                 text="High"/>
+
+                                </HBox>
+
+
+                                <!-- CHECK BOX -->
+
+                                <CheckBox fx:id="featuredCheckBox"
+                                          text="Featured project"/>
+
+
+                                <!-- SLIDER -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Completion:"/>
+
+                                    <Slider fx:id="completionSlider"
+                                            min="0"
+                                            max="100"
+                                            value="50"
+                                            HBox.hgrow="ALWAYS"/>
+
+                                    <Label fx:id="completionLabel"
+                                           text="50%"/>
+
+                                </HBox>
+
+
+                                <!-- SPINNER -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Team Members:"/>
+
+                                    <Spinner fx:id="teamSpinner"
+                                             prefWidth="100"/>
+
+                                </HBox>
+
+
+                                <!-- PASSWORD FIELD -->
+
+                                <HBox spacing="10"
+                                      alignment="CENTER_LEFT">
+
+                                    <Label text="Portfolio PIN:"/>
+
+                                    <PasswordField fx:id="passwordField"
+                                                   promptText="Enter PIN"/>
+
+                                </HBox>
+
+
+                                <!-- TREE VIEW -->
+
+                                <Label text="Technology Categories"/>
+
+                                <TreeView fx:id="technologyTree"
+                                          prefHeight="130"/>
+
+
+                                <!-- LIST VIEW -->
+
+                                <Label text="Selected Tools"/>
+
+                                <ListView fx:id="toolsList"
+                                          prefHeight="100"/>
+
+
+                                <!-- PROGRESS BAR -->
+
+                                <Label text="Portfolio Completion"/>
+
+                                <ProgressBar fx:id="portfolioProgress"
+                                             progress="0.5"
+                                             maxWidth="Infinity"/>
+
+
+                                <!-- FILE CHOOSER / ABOUT -->
+
+                                <HBox spacing="10">
+
+                                    <Button text="Choose Profile Image"
+                                            onAction="#chooseImage"/>
+
+                                    <Button text="Show About"
+                                            onAction="#showAbout"/>
+
+                                </HBox>
+
+
+                                <!-- ================================================= -->
+                                <!-- API -->
+                                <!-- ================================================= -->
+
+                                <Separator/>
+
+                                <Label text="External API"/>
+
+                                <Button fx:id="fetchApiButton"
+                                        text="Fetch API Data"
+                                        onAction="#fetchApiData"/>
+
+                                <TextArea fx:id="apiResultArea"
+                                          promptText="API response will appear here..."
+                                          prefRowCount="8"
+                                          wrapText="true"
+                                          maxWidth="Infinity"/>
+
+                                <ProgressBar fx:id="apiProgress"
+                                             progress="0"
+                                             maxWidth="Infinity"/>
+
+                            </VBox>
+
+                        </content>
+
+                    </TitledPane>
 
                 </VBox>
 
-            </TitledPane>
+            </content>
 
-        </VBox>
+        </ScrollPane>
 
     </center>
 
