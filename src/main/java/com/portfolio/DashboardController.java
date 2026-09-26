@@ -19,6 +19,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import com.portfolio.database.ProjectDAO;
+
 
 public class DashboardController {
 
@@ -156,7 +158,7 @@ public class DashboardController {
     private ObservableList<Project> projectList =
             FXCollections.observableArrayList();
 
-
+    private final ProjectDAO projectDAO = new ProjectDAO();
     // ==========================================
     // INITIALIZE
     // ==========================================
@@ -164,21 +166,13 @@ public class DashboardController {
     @FXML
     public void initialize() {
 
-        // ------------------------------------------
-        // Background colors
-        // ------------------------------------------
-
         sidebar.setBackground(
                 new Background(
                         new BackgroundFill(
                                 Color.web("#020617"),
                                 CornerRadii.EMPTY,
                                 Insets.EMPTY
-                        )
-                )
-        );
-
-
+                        )   )   );
         content.setBackground(
                 new Background(
                         new BackgroundFill(
@@ -188,12 +182,7 @@ public class DashboardController {
                         )
                 )
         );
-
-
-        // ------------------------------------------
         // Logo
-        // ------------------------------------------
-
         logo.setFont(
                 Font.font("Arial", FontWeight.BOLD, 25)
         );
@@ -202,11 +191,7 @@ public class DashboardController {
                 Color.web("#38BDF8")
         );
 
-
-        // ------------------------------------------
         // Menu title
-        // ------------------------------------------
-
         menuTitle.setFont(
                 Font.font("Arial", FontWeight.BOLD, 11)
         );
@@ -215,10 +200,7 @@ public class DashboardController {
                 Color.web("#94A3B8")
         );
 
-
-        // ------------------------------------------
         // Sidebar buttons
-        // ------------------------------------------
 
         setupButton(dashboardButton);
         setupButton(projectsButton);
@@ -228,10 +210,7 @@ public class DashboardController {
         setupButton(apiButton);
         setupButton(settingsButton);
 
-
-        // ------------------------------------------
         // Page title
-        // ------------------------------------------
 
         pageTitle.setFont(
                 Font.font("Arial", FontWeight.BOLD, 30)
@@ -355,7 +334,7 @@ public class DashboardController {
         );
 
         projectTable.setItems(projectList);
-
+        loadProjects();
 
         // ==========================================
         // PROJECT SELECTION
@@ -452,6 +431,7 @@ public class DashboardController {
                 )
         );
     }
+
 
     // ==========================================
     // TEXT AREA STYLE
@@ -582,9 +562,8 @@ public class DashboardController {
                 github
         );
 
-
+        projectDAO.insertProject(project);
         projectList.add(project);
-
 
         projectMessage.setText(
                 "Project added: " + project.getTitle()
@@ -857,6 +836,14 @@ public class DashboardController {
 
         welcome.setText(
                 "Application settings."
+        );
+    }
+    private void loadProjects() {
+
+        projectList.clear();
+
+        projectList.addAll(
+                projectDAO.getAllProjects()
         );
     }
 }
