@@ -59,6 +59,13 @@
                         text="⚙   Settings"
                         onAction="#showSettings"/>
 
+                <Button fx:id="updateProjectButton"
+                        text="Update Project"
+                        onAction="#updateProject"/>
+
+                <Button fx:id="deleteProjectButton"
+                        text="Delete Project"
+                        onAction="#deleteProject"/>
             </children>
 
         </VBox>
@@ -130,6 +137,21 @@
                     </columns>
 
                 </TableView>
+
+                <Label text="Selected Project Details"/>
+
+                <Label fx:id="detailTitle"
+                       text="No project selected"/>
+
+                <Label fx:id="detailTechnology"
+                       text=""/>
+
+                <Label fx:id="detailDescription"
+                       text=""
+                       wrapText="true"/>
+
+                <Label fx:id="detailGithub"
+                       text=""/>
 
             </children>
 

@@ -34,4 +34,20 @@ public class Project {
     public String getGithubLink() {
         return githubLink;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTechnology(String technology) {
+        this.technology = technology;
+    }
+
+    public void setGithubLink(String githubLink) {
+        this.githubLink = githubLink;
+    }
 }

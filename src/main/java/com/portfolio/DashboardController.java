@@ -90,6 +90,110 @@ public class DashboardController {
     @FXML
     private TableColumn<Project, String> githubColumn;
 
+    @FXML
+    private Label detailTitle;
+
+    @FXML
+    private Label detailTechnology;
+
+    @FXML
+    private Label detailDescription;
+
+    @FXML
+    private Label detailGithub;
+
+    @FXML
+    private Button updateProjectButton;
+
+    @FXML
+    private Button deleteProjectButton;
+
+    @FXML
+    private void updateProject() {
+
+        Project selectedProject =
+                projectTable.getSelectionModel().getSelectedItem();
+
+        if (selectedProject == null) {
+
+            projectMessage.setText(
+                    "Please select a project first."
+            );
+
+            projectMessage.setTextFill(
+                    Color.web("#F87171")
+            );
+
+            return;
+        }
+
+        selectedProject.setTitle(
+                titleField.getText()
+        );
+
+        selectedProject.setDescription(
+                descriptionField.getText()
+        );
+
+        selectedProject.setTechnology(
+                technologyField.getText()
+        );
+
+        selectedProject.setGithubLink(
+                githubField.getText()
+        );
+
+        projectTable.refresh();
+
+        projectMessage.setText(
+                "Project updated successfully."
+        );
+
+        projectMessage.setTextFill(
+                Color.web("#38BDF8")
+        );
+    }
+
+    @FXML
+    private void deleteProject() {
+
+        Project selectedProject =
+                projectTable.getSelectionModel().getSelectedItem();
+
+        if (selectedProject == null) {
+
+            projectMessage.setText(
+                    "Please select a project first."
+            );
+
+            projectMessage.setTextFill(
+                    Color.web("#F87171")
+            );
+
+            return;
+        }
+
+        projectList.remove(selectedProject);
+
+        projectMessage.setText(
+                "Project deleted successfully."
+        );
+
+        projectMessage.setTextFill(
+                Color.web("#38BDF8")
+        );
+
+        titleField.clear();
+        descriptionField.clear();
+        technologyField.clear();
+        githubField.clear();
+
+        detailTitle.setText("No project selected");
+        detailTechnology.setText("");
+        detailDescription.setText("");
+        detailGithub.setText("");
+    }
+
     private ObservableList<Project> projectList =
             FXCollections.observableArrayList();
 
@@ -182,6 +286,46 @@ public class DashboardController {
         );
 
         projectTable.setItems(projectList);
+
+        projectTable.getSelectionModel()
+                .selectedItemProperty()
+                .addListener((observable, oldProject, selectedProject) -> {
+
+                    if (selectedProject != null) {
+
+                        detailTitle.setText(
+                                "Title: " + selectedProject.getTitle()
+                        );
+
+                        detailTechnology.setText(
+                                "Technology: " + selectedProject.getTechnology()
+                        );
+
+                        detailDescription.setText(
+                                "Description: " + selectedProject.getDescription()
+                        );
+
+                        detailGithub.setText(
+                                "GitHub: " + selectedProject.getGithubLink()
+                        );
+
+                        titleField.setText(
+                                selectedProject.getTitle()
+                        );
+
+                        descriptionField.setText(
+                                selectedProject.getDescription()
+                        );
+
+                        technologyField.setText(
+                                selectedProject.getTechnology()
+                        );
+
+                        githubField.setText(
+                                selectedProject.getGithubLink()
+                        );
+                    }
+                });
     }
 
 
