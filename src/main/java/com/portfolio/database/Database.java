@@ -51,13 +51,30 @@ public class Database {
             )
             """;
 
+        String notesSql = """
+        CREATE TABLE IF NOT EXISTS notes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            content TEXT NOT NULL
+        )
+        """;
+
+        String tasksSql = """
+        CREATE TABLE IF NOT EXISTS tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            completed INTEGER NOT NULL DEFAULT 0
+        )
+        """;
+
         try (Connection connection = connect();
              Statement statement = connection.createStatement()) {
 
             statement.execute(projectsSql);
             statement.execute(skillsSql);
             statement.execute(projectSkillsSql);
-
+            statement.execute(notesSql);
+            statement.execute(tasksSql);
             System.out.println(
                     "Database tables created successfully."
             );
