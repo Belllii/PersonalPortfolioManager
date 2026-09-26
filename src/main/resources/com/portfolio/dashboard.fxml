@@ -525,6 +525,8 @@
                                 <Button fx:id="fetchApiButton"
                                         text="Fetch API Data"
                                         onAction="#fetchApiData"/>
+                                <Label fx:id="apiStatusLabel"
+                                       text="Status: Ready"/>
 
                                 <TextArea fx:id="apiResultArea"
                                           promptText="API response will appear here..."

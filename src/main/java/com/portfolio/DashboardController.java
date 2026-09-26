@@ -46,7 +46,8 @@ import javafx.scene.paint.Color;
 
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -102,6 +103,9 @@ public class DashboardController {
     private Button fetchApiButton;
 
     @FXML
+    private Label apiStatusLabel;
+
+    @FXML
     private TextArea apiResultArea;
 
     @FXML
@@ -109,6 +113,8 @@ public class DashboardController {
 
     private final ApiService apiService =
             new ApiService();
+    private final ExecutorService apiExecutor =
+            Executors.newFixedThreadPool(2);
     // =========================================================
     // PROJECT FORM
     // =========================================================
@@ -254,58 +260,74 @@ public class DashboardController {
 // COMMIT 15 - HTTP + JSON
 // =========================================================
 
+    // =========================================================
+// COMMIT 16 - MULTITHREADING + THREAD POOL
+// =========================================================
+
     @FXML
     private void fetchApiData() {
 
+        apiStatusLabel.setText(
+                "Status: Running in thread pool..."
+        );
         apiResultArea.setText(
-                "Fetching data from API..."
+                "Fetching data...\n"
+                        + "Using background thread pool."
         );
 
         apiProgress.setProgress(
                 ProgressIndicator.INDETERMINATE_PROGRESS
         );
 
-        Task<String> task =
-                new Task<>() {
+        apiExecutor.submit(() -> {
 
-                    @Override
-                    protected String call()
-                            throws Exception {
+            try {
 
-                        return apiService.fetchData();
-                    }
-                };
+                String result =
+                        apiService.fetchData();
 
-        task.setOnSucceeded(event -> {
+                String threadName =
+                        Thread.currentThread()
+                                .getName();
 
-            apiResultArea.setText(
-                    task.getValue()
-            );
+                Platform.runLater(() -> {
 
-            apiProgress.setProgress(
-                    1
-            );
+                    apiResultArea.setText(
+                            "Status: Completed\n"
+                                    + "Worker Thread: "
+                                    + threadName
+                                    + "\n\n"
+                                    + result
+                    );
+
+                    apiProgress.setProgress(1);
+
+                });
+                apiStatusLabel.setText(
+                        "Status: Completed"
+                );
+
+            } catch (Exception e) {
+
+                String error =
+                        e.getMessage();
+
+                Platform.runLater(() -> {
+
+                    apiResultArea.setText(
+                            "Status: Failed\n\n"
+                                    + error
+                    );
+
+                    apiProgress.setProgress(0);
+
+                });
+                apiStatusLabel.setText(
+                        "Status: Failed"
+                );
+            }
         });
 
-        task.setOnFailed(event -> {
-
-            apiResultArea.setText(
-                    "Failed to fetch API data.\n\n"
-                            + task.getException()
-                            .getMessage()
-            );
-
-            apiProgress.setProgress(
-                    0
-            );
-        });
-
-        Thread thread =
-                new Thread(task);
-
-        thread.setDaemon(true);
-
-        thread.start();
     }
     // =========================================================
     // INITIALIZE
