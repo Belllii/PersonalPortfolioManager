@@ -1,7 +1,9 @@
-  package com.portfolio;
+package com.portfolio;
 
 import com.portfolio.database.ProjectDAO;
 import com.portfolio.database.SkillDAO;
+import com.portfolio.database.NoteDAO;
+import com.portfolio.database.TaskDAO;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -18,6 +20,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.ProgressBar;
@@ -34,22 +37,25 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.concurrent.Task;
+import javafx.scene.control.ProgressIndicator;
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.control.ProgressIndicator;
+
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.Node;
-
 import javafx.scene.paint.Color;
 import javafx.scene.layout.StackPane;
+
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -104,6 +110,11 @@ public class DashboardController {
     @FXML
     private Label welcome;
 
+
+    // =========================================================
+    // API
+    // =========================================================
+
     @FXML
     private Button fetchApiButton;
 
@@ -118,8 +129,11 @@ public class DashboardController {
 
     private final ApiService apiService =
             new ApiService();
+
     private final ExecutorService apiExecutor =
             Executors.newFixedThreadPool(2);
+
+
     // =========================================================
     // PROJECT FORM
     // =========================================================
@@ -202,7 +216,7 @@ public class DashboardController {
 
 
     // =========================================================
-    // COMMIT 14 CONTROLS
+    // COMMIT 14 - PORTFOLIO TOOLS
     // =========================================================
 
     @FXML
@@ -250,9 +264,10 @@ public class DashboardController {
     @FXML
     private ImageView profileImage;
 
-// =========================================================
-// PAGE NAVIGATION
-// =========================================================
+
+    // =========================================================
+    // PAGE NAVIGATION
+    // =========================================================
 
     @FXML
     private VBox dashboardPage;
@@ -274,8 +289,10 @@ public class DashboardController {
 
     @FXML
     private VBox settingsPage;
+
+
     // =========================================================
-    // DATABASE DATA
+    // DATABASE
     // =========================================================
 
     private final ObservableList<Project> projectList =
@@ -283,12 +300,11 @@ public class DashboardController {
 
     private final ProjectDAO projectDAO =
             new ProjectDAO();
-// =========================================================
-// COMMIT 12 - SKILLS
-// =========================================================
 
-    @FXML
-    private VBox skillsSection;
+
+    // =========================================================
+    // SKILLS
+    // =========================================================
 
     @FXML
     private TextField skillNameField;
@@ -328,13 +344,72 @@ public class DashboardController {
 
     private final SkillDAO skillDAO =
             new SkillDAO();
-// =========================================================
-// COMMIT 15 - HTTP + JSON
-// =========================================================
+
 
     // =========================================================
-// COMMIT 16 - MULTITHREADING + THREAD POOL
-// =========================================================
+    // NOTES
+    // =========================================================
+
+    @FXML
+    private TextField noteTitleField;
+
+    @FXML
+    private TextArea noteContentArea;
+
+    @FXML
+    private ListView<Note> noteListView;
+
+    @FXML
+    private Button addNoteButton;
+
+    @FXML
+    private Button updateNoteButton;
+
+    @FXML
+    private Button deleteNoteButton;
+
+    private final ObservableList<Note> noteList =
+            FXCollections.observableArrayList();
+
+    private final NoteDAO noteDAO =
+            new NoteDAO();
+
+
+    // =========================================================
+    // TASKS
+    // =========================================================
+
+    @FXML
+    private TextField taskTitleField;
+
+    @FXML
+    private CheckBox taskCompletedCheckBox;
+
+    @FXML
+    private ListView<TaskItem> taskListView;
+
+    @FXML
+    private Button addTaskButton;
+
+    @FXML
+    private Button updateTaskButton;
+
+    @FXML
+    private Button deleteTaskButton;
+
+    @FXML
+    private Button toggleTaskButton;
+
+    private final ObservableList<TaskItem> taskList =
+            FXCollections.observableArrayList();
+
+    private final TaskDAO taskDAO =
+            new TaskDAO();
+
+
+    // =========================================================
+    // API
+    // =========================================================
 
     @FXML
     private void fetchApiData() {
@@ -342,6 +417,7 @@ public class DashboardController {
         apiStatusLabel.setText(
                 "Status: Running in thread pool..."
         );
+
         apiResultArea.setText(
                 "Fetching data...\n"
                         + "Using background thread pool."
@@ -373,10 +449,10 @@ public class DashboardController {
                     );
 
                     apiProgress.setProgress(1);
+
                     apiStatusLabel.setText(
                             "Status: Completed"
                     );
-
                 });
 
             } catch (Exception e) {
@@ -392,15 +468,19 @@ public class DashboardController {
                     );
 
                     apiProgress.setProgress(0);
+
                     apiStatusLabel.setText(
                             "Status: Failed"
                     );
-
                 });
             }
         });
-
     }
+
+
+    // =========================================================
+    // PAGE VISIBILITY
+    // =========================================================
 
     private void showPage(VBox page) {
 
@@ -428,6 +508,8 @@ public class DashboardController {
         page.setVisible(true);
         page.setManaged(true);
     }
+
+
     // =========================================================
     // INITIALIZE
     // =========================================================
@@ -459,7 +541,6 @@ public class DashboardController {
                 )
         );
 
-        // Make normal labels readable on the dark application background.
         setupReadableText(content);
         setupReadableText(sidebar);
 
@@ -533,10 +614,7 @@ public class DashboardController {
         // -----------------------------------------------------
 
         welcome.setFont(
-                Font.font(
-                        "Arial",
-                        16
-                )
+                Font.font("Arial", 16)
         );
 
         welcome.setTextFill(
@@ -545,33 +623,14 @@ public class DashboardController {
 
 
         // -----------------------------------------------------
-        // FORM LABELS
+        // PROJECT LABELS
         // -----------------------------------------------------
 
         setupFormLabel(projectTitleLabel);
         setupFormLabel(descriptionLabel);
         setupFormLabel(technologyLabel);
         setupFormLabel(githubLabel);
-
         setupFormLabel(projectFormTitle);
-
-        if (apiStatusLabel != null) {
-            apiStatusLabel.setTextFill(Color.web("#38BDF8"));
-            apiStatusLabel.setFont(
-                    Font.font("Arial", FontWeight.BOLD, 14)
-            );
-        }
-
-        if (apiResultArea != null) {
-            apiResultArea.setFont(
-                    Font.font("Consolas", 13)
-            );
-        }
-
-
-        // -----------------------------------------------------
-        // PROJECT TITLE
-        // -----------------------------------------------------
 
         myProjectsLabel.setFont(
                 Font.font(
@@ -592,7 +651,37 @@ public class DashboardController {
 
 
         // -----------------------------------------------------
-        // TEXT FIELDS
+        // API
+        // -----------------------------------------------------
+
+        if (apiStatusLabel != null) {
+
+            apiStatusLabel.setTextFill(
+                    Color.web("#38BDF8")
+            );
+
+            apiStatusLabel.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            14
+                    )
+            );
+        }
+
+        if (apiResultArea != null) {
+
+            apiResultArea.setFont(
+                    Font.font(
+                            "Consolas",
+                            13
+                    )
+            );
+        }
+
+
+        // -----------------------------------------------------
+        // PROJECT FIELDS
         // -----------------------------------------------------
 
         setupTextField(titleField);
@@ -603,7 +692,7 @@ public class DashboardController {
 
 
         // -----------------------------------------------------
-        // BUTTONS
+        // PROJECT BUTTONS
         // -----------------------------------------------------
 
         setupActionButton(addProjectButton);
@@ -611,17 +700,13 @@ public class DashboardController {
         setupDeleteButton(deleteProjectButton);
 
 
-        // -----------------------------------------------------
-        // MESSAGE
-        // -----------------------------------------------------
-
         projectMessage.setTextFill(
                 Color.web("#38BDF8")
         );
 
 
         // -----------------------------------------------------
-        // TABLE COLUMNS
+        // PROJECT TABLE
         // -----------------------------------------------------
 
         titleColumn.setCellValueFactory(
@@ -636,18 +721,15 @@ public class DashboardController {
                 new PropertyValueFactory<>("githubLink")
         );
 
-
-        // -----------------------------------------------------
-        // TABLE
-        // -----------------------------------------------------
-
-        projectTable.setItems(projectList);
+        projectTable.setItems(
+                projectList
+        );
 
         loadProjects();
 
 
         // -----------------------------------------------------
-        // TABLE SELECTION
+        // PROJECT SELECTION
         // -----------------------------------------------------
 
         projectTable
@@ -677,18 +759,25 @@ public class DashboardController {
 
 
         // -----------------------------------------------------
-        // COMMIT 14
+        // SETUP FEATURES
         // -----------------------------------------------------
 
         setupPortfolioTools();
+
         setupSkills();
+
+        setupNotes();
+
+        setupTasks();
+
         setupResponsiveLayout();
+
         showPage(dashboardPage);
     }
 
 
     // =========================================================
-    // LOAD PROJECTS
+    // PROJECTS
     // =========================================================
 
     private void loadProjects() {
@@ -700,10 +789,6 @@ public class DashboardController {
         );
     }
 
-
-    // =========================================================
-    // SHOW PROJECT DETAILS
-    // =========================================================
 
     private void showProjectDetails(
             Project project) {
@@ -730,10 +815,6 @@ public class DashboardController {
     }
 
 
-    // =========================================================
-    // LOAD PROJECT INTO FORM
-    // =========================================================
-
     private void loadProjectIntoForm(
             Project project) {
 
@@ -754,10 +835,6 @@ public class DashboardController {
         );
     }
 
-
-    // =========================================================
-    // ADD PROJECT
-    // =========================================================
 
     @FXML
     private void addProject() {
@@ -813,10 +890,6 @@ public class DashboardController {
         clearForm();
     }
 
-
-    // =========================================================
-    // UPDATE PROJECT
-    // =========================================================
 
     @FXML
     private void updateProject() {
@@ -899,10 +972,6 @@ public class DashboardController {
     }
 
 
-    // =========================================================
-    // DELETE PROJECT
-    // =========================================================
-
     @FXML
     private void deleteProject() {
 
@@ -939,28 +1008,19 @@ public class DashboardController {
         clearForm();
 
         clearDetails();
+
+        projectSkillList.clear();
     }
 
-
-    // =========================================================
-    // CLEAR FORM
-    // =========================================================
 
     private void clearForm() {
 
         titleField.clear();
-
         descriptionField.clear();
-
         technologyField.clear();
-
         githubField.clear();
     }
 
-
-    // =========================================================
-    // CLEAR DETAILS
-    // =========================================================
 
     private void clearDetails() {
 
@@ -969,16 +1029,10 @@ public class DashboardController {
         );
 
         detailTechnology.setText("");
-
         detailDescription.setText("");
-
         detailGithub.setText("");
     }
 
-
-    // =========================================================
-    // SUCCESS MESSAGE
-    // =========================================================
 
     private void showSuccess(
             String message) {
@@ -993,10 +1047,6 @@ public class DashboardController {
     }
 
 
-    // =========================================================
-    // ERROR MESSAGE
-    // =========================================================
-
     private void showError(
             String message) {
 
@@ -1009,28 +1059,62 @@ public class DashboardController {
         );
     }
 
-// =========================================================
-// SKILLS SETUP
-// =========================================================
 
+    // =========================================================
+    // SKILLS
+    // =========================================================
     private void setupSkills() {
 
-        // The current FXML may still contain the Skills placeholder.
-        // Do not let missing skill controls crash application startup.
-        if (skillListView == null
-                || projectSkillListView == null
-                || skillNameField == null
-                || skillCategoryField == null
-                || skillLevelSlider == null
-                || skillLevelLabel == null) {
-            return;
-        }
-
+        // Connect the ObservableList to the ListView
         skillListView.setItems(skillList);
 
-        projectSkillListView.setItems(
-                projectSkillList
-        );
+        // Make sure the ListView has enough visible space
+        skillListView.setPrefHeight(180);
+        skillListView.setMinHeight(180);
+
+        // Custom display for each Skill
+        skillListView.setCellFactory(listView -> new ListCell<Skill>() {
+
+            @Override
+            protected void updateItem(Skill skill, boolean empty) {
+
+                super.updateItem(skill, empty);
+
+                if (empty || skill == null) {
+
+                    setText("");
+                    setGraphic(null);
+
+                } else {
+
+                    String text =
+                            skill.getName()
+                                    + " - "
+                                    + skill.getCategory()
+                                    + " ("
+                                    + skill.getLevel()
+                                    + "%)";
+
+                    setText(text);
+
+                    // Explicitly make the text visible
+                    setTextFill(Color.BLACK);
+
+                    setFont(
+                            Font.font(
+                                    "Arial",
+                                    FontWeight.NORMAL,
+                                    14
+                            )
+                    );
+                }
+            }
+        });
+
+
+        // ---------------------------------------------------------
+        // SKILL LEVEL SLIDER
+        // ---------------------------------------------------------
 
         skillLevelSlider.setMin(0);
         skillLevelSlider.setMax(100);
@@ -1038,24 +1122,29 @@ public class DashboardController {
 
         skillLevelLabel.setText("50%");
 
-        skillLevelSlider.valueProperty()
-                .addListener((observable, oldValue, newValue) -> {
+
+        skillLevelSlider.valueProperty().addListener(
+                (obs, oldValue, newValue) -> {
+
+                    int value =
+                            newValue.intValue();
 
                     skillLevelLabel.setText(
-                            String.format(
-                                    "%.0f%%",
-                                    newValue.doubleValue()
-                            )
+                            value + "%"
                     );
-                });
+                }
+        );
+
+
+        // ---------------------------------------------------------
+        // SELECT SKILL
+        // ---------------------------------------------------------
 
         skillListView
                 .getSelectionModel()
                 .selectedItemProperty()
                 .addListener(
-                        (observable,
-                         oldSkill,
-                         selectedSkill) -> {
+                        (obs, oldSkill, selectedSkill) -> {
 
                             if (selectedSkill != null) {
 
@@ -1070,23 +1159,125 @@ public class DashboardController {
                                 skillLevelSlider.setValue(
                                         selectedSkill.getLevel()
                                 );
+
+                                skillLevelLabel.setText(
+                                        selectedSkill.getLevel()
+                                                + "%"
+                                );
                             }
                         }
                 );
+
+
+        // ---------------------------------------------------------
+        // PROJECT SKILL LIST
+        // ---------------------------------------------------------
+
+        projectSkillListView.setItems(
+                projectSkillList
+        );
+
+        projectSkillListView.setPrefHeight(150);
+        projectSkillListView.setMinHeight(150);
+
+        projectSkillListView.setCellFactory(
+                listView -> new ListCell<Skill>() {
+
+                    @Override
+                    protected void updateItem(
+                            Skill skill,
+                            boolean empty) {
+
+                        super.updateItem(
+                                skill,
+                                empty
+                        );
+
+                        if (empty || skill == null) {
+
+                            setText("");
+
+                        } else {
+
+                            setText(
+                                    skill.getName()
+                                            + " - "
+                                            + skill.getCategory()
+                                            + " ("
+                                            + skill.getLevel()
+                                            + "%)"
+                            );
+
+                            setTextFill(Color.BLACK);
+
+                            setFont(
+                                    Font.font(
+                                            "Arial",
+                                            14
+                                    )
+                            );
+                        }
+                    }
+                }
+        );
+
+
+        // ---------------------------------------------------------
+        // LOAD FROM DATABASE
+        // ---------------------------------------------------------
 
         loadSkills();
     }
     private void loadSkills() {
 
-        skillList.clear();
+        System.out.println("================================");
+        System.out.println("Loading skills...");
 
-        skillList.addAll(
-                skillDAO.getAllSkills()
-        );
+        try {
+
+            skillList.clear();
+
+            java.util.List<Skill> skills =
+                    skillDAO.getAllSkills();
+
+            System.out.println(
+                    "Database returned: "
+                            + skills.size()
+                            + " skills"
+            );
+
+            for (Skill skill : skills) {
+
+                System.out.println(
+                        "ID: " + skill.getId()
+                                + " | Name: " + skill.getName()
+                                + " | Category: " + skill.getCategory()
+                                + " | Level: " + skill.getLevel()
+                );
+            }
+
+            skillList.addAll(skills);
+
+            // Tell the ListView to redraw
+            skillListView.refresh();
+
+            System.out.println(
+                    "ListView now contains: "
+                            + skillListView.getItems().size()
+                            + " skills"
+            );
+
+            System.out.println("================================");
+
+        } catch (Exception e) {
+
+            System.out.println(
+                    "ERROR WHILE LOADING SKILLS:"
+            );
+
+            e.printStackTrace();
+        }
     }
-    // =========================================================
-// ADD SKILL
-// =========================================================
 
     @FXML
     private void addSkill() {
@@ -1100,6 +1291,7 @@ public class DashboardController {
         int level =
                 (int) skillLevelSlider.getValue();
 
+
         if (name.isEmpty()
                 || category.isEmpty()) {
 
@@ -1110,26 +1302,57 @@ public class DashboardController {
             return;
         }
 
-        Skill skill =
-                new Skill(
-                        name,
-                        category,
-                        level
+
+        try {
+
+            Skill skill =
+                    new Skill(
+                            name,
+                            category,
+                            level
+                    );
+
+
+            boolean inserted =
+                    skillDAO.insertSkill(skill);
+
+
+            if (!inserted) {
+
+                showError(
+                        "Skill could not be inserted into the database."
                 );
 
-        skillDAO.insertSkill(skill);
+                return;
+            }
 
-        loadSkills();
 
-        clearSkillForm();
+            System.out.println(
+                    "Skill successfully inserted: "
+                            + name
+            );
 
-        showSuccess(
-                "Skill added successfully."
-        );
+
+            loadSkills();
+
+            clearSkillForm();
+
+
+            showSuccess(
+                    "Skill added successfully."
+            );
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+            showError(
+                    "Could not add skill: "
+                            + e.getMessage()
+            );
+        }
     }
-    // =========================================================
-// UPDATE SKILL
-// =========================================================
 
     @FXML
     private void updateSkill() {
@@ -1139,6 +1362,7 @@ public class DashboardController {
                         .getSelectionModel()
                         .getSelectedItem();
 
+
         if (selectedSkill == null) {
 
             showError(
@@ -1148,14 +1372,20 @@ public class DashboardController {
             return;
         }
 
+
         String name =
-                skillNameField.getText().trim();
+                skillNameField
+                        .getText()
+                        .trim();
 
         String category =
-                skillCategoryField.getText().trim();
+                skillCategoryField
+                        .getText()
+                        .trim();
 
         int level =
                 (int) skillLevelSlider.getValue();
+
 
         if (name.isEmpty()
                 || category.isEmpty()) {
@@ -1167,6 +1397,7 @@ public class DashboardController {
             return;
         }
 
+
         Skill updatedSkill =
                 new Skill(
                         name,
@@ -1174,10 +1405,12 @@ public class DashboardController {
                         level
                 );
 
+
         skillDAO.updateSkill(
                 selectedSkill.getId(),
                 updatedSkill
         );
+
 
         loadSkills();
 
@@ -1186,10 +1419,21 @@ public class DashboardController {
         showSuccess(
                 "Skill updated successfully."
         );
+
+
+        Project selectedProject =
+                projectTable
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedProject != null) {
+
+            loadProjectSkills(
+                    selectedProject.getId()
+            );
+        }
     }
-    // =========================================================
-// DELETE SKILL
-// =========================================================
+
 
     @FXML
     private void deleteSkill() {
@@ -1198,6 +1442,7 @@ public class DashboardController {
                 skillListView
                         .getSelectionModel()
                         .getSelectedItem();
+
 
         if (selectedSkill == null) {
 
@@ -1208,9 +1453,11 @@ public class DashboardController {
             return;
         }
 
+
         skillDAO.deleteSkill(
                 selectedSkill.getId()
         );
+
 
         loadSkills();
 
@@ -1222,9 +1469,7 @@ public class DashboardController {
                 "Skill deleted successfully."
         );
     }
-    // =========================================================
-// ASSIGN SKILL TO PROJECT
-// =========================================================
+
 
     @FXML
     private void assignSkillToProject() {
@@ -1239,6 +1484,7 @@ public class DashboardController {
                         .getSelectionModel()
                         .getSelectedItem();
 
+
         if (selectedProject == null) {
 
             showError(
@@ -1247,6 +1493,7 @@ public class DashboardController {
 
             return;
         }
+
 
         if (selectedSkill == null) {
 
@@ -1257,25 +1504,26 @@ public class DashboardController {
             return;
         }
 
+
         skillDAO.assignSkillToProject(
                 selectedProject.getId(),
                 selectedSkill.getId()
         );
 
+
         loadProjectSkills(
                 selectedProject.getId()
         );
+
 
         showSuccess(
                 "Skill assigned to project."
         );
     }
+
+
     private void loadProjectSkills(
             int projectId) {
-
-        if (projectSkillListView == null) {
-            return;
-        }
 
         projectSkillList.clear();
 
@@ -1285,6 +1533,8 @@ public class DashboardController {
                 )
         );
     }
+
+
     private void clearSkillForm() {
 
         skillNameField.clear();
@@ -1297,6 +1547,453 @@ public class DashboardController {
                 .getSelectionModel()
                 .clearSelection();
     }
+
+
+    // =========================================================
+    // NOTES
+    // =========================================================
+
+    private void setupNotes() {
+
+        noteListView.setItems(
+                noteList
+        );
+
+        loadNotes();
+
+
+        // -----------------------------------------------------
+        // SELECT NOTE
+        // -----------------------------------------------------
+
+        noteListView
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable,
+                         oldNote,
+                         selectedNote) -> {
+
+                            if (selectedNote != null) {
+
+                                noteTitleField.setText(
+                                        selectedNote.getTitle()
+                                );
+
+                                noteContentArea.setText(
+                                        selectedNote.getContent()
+                                );
+                            }
+                        }
+                );
+    }
+
+
+    private void loadNotes() {
+
+        noteList.clear();
+
+        noteList.addAll(
+                noteDAO.getAllNotes()
+        );
+    }
+
+
+    @FXML
+    private void addNote() {
+
+        String title =
+                noteTitleField
+                        .getText()
+                        .trim();
+
+        String content =
+                noteContentArea.getText();
+
+
+        if (title.isEmpty()) {
+
+            showError(
+                    "Please enter a note title."
+            );
+
+            return;
+        }
+
+
+        Note note =
+                new Note(
+                        title,
+                        content
+                );
+
+
+        noteDAO.insertNote(note);
+
+        loadNotes();
+
+        clearNoteForm();
+
+        showSuccess(
+                "Note added successfully."
+        );
+    }
+
+
+    @FXML
+    private void updateNote() {
+
+        Note selectedNote =
+                noteListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (selectedNote == null) {
+
+            showError(
+                    "Please select a note first."
+            );
+
+            return;
+        }
+
+
+        String title =
+                noteTitleField
+                        .getText()
+                        .trim();
+
+        String content =
+                noteContentArea.getText();
+
+
+        if (title.isEmpty()) {
+
+            showError(
+                    "Please enter a note title."
+            );
+
+            return;
+        }
+
+
+        Note updatedNote =
+                new Note(
+                        title,
+                        content
+                );
+
+
+        noteDAO.updateNote(
+                selectedNote.getId(),
+                updatedNote
+        );
+
+
+        loadNotes();
+
+        clearNoteForm();
+
+        showSuccess(
+                "Note updated successfully."
+        );
+    }
+
+
+    @FXML
+    private void deleteNote() {
+
+        Note selectedNote =
+                noteListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (selectedNote == null) {
+
+            showError(
+                    "Please select a note first."
+            );
+
+            return;
+        }
+
+
+        noteDAO.deleteNote(
+                selectedNote.getId()
+        );
+
+
+        loadNotes();
+
+        clearNoteForm();
+
+        showSuccess(
+                "Note deleted successfully."
+        );
+    }
+
+
+    private void clearNoteForm() {
+
+        noteTitleField.clear();
+
+        noteContentArea.clear();
+
+        noteListView
+                .getSelectionModel()
+                .clearSelection();
+    }
+
+
+    // =========================================================
+    // TASKS
+    // =========================================================
+
+    private void setupTasks() {
+
+        taskListView.setItems(
+                taskList
+        );
+
+        loadTasks();
+
+
+        // -----------------------------------------------------
+        // SELECT TASK
+        // -----------------------------------------------------
+
+        taskListView
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable,
+                         oldTask,
+                         selectedTask) -> {
+
+                            if (selectedTask != null) {
+
+                                taskTitleField.setText(
+                                        selectedTask.getTitle()
+                                );
+
+                                taskCompletedCheckBox
+                                        .setSelected(
+                                                selectedTask
+                                                        .isCompleted()
+                                        );
+                            }
+                        }
+                );
+    }
+
+
+    private void loadTasks() {
+
+        taskList.clear();
+
+        taskList.addAll(
+                taskDAO.getAllTasks()
+        );
+    }
+
+
+    @FXML
+    private void addTask() {
+
+        String title =
+                taskTitleField
+                        .getText()
+                        .trim();
+
+
+        if (title.isEmpty()) {
+
+            showError(
+                    "Please enter a task title."
+            );
+
+            return;
+        }
+
+
+        TaskItem task =
+                new TaskItem(
+                        title,
+                        taskCompletedCheckBox
+                                .isSelected()
+                );
+
+
+        taskDAO.insertTask(task);
+
+        loadTasks();
+
+        clearTaskForm();
+
+        showSuccess(
+                "Task added successfully."
+        );
+    }
+
+
+    @FXML
+    private void updateTask() {
+
+        TaskItem selectedTask =
+                taskListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (selectedTask == null) {
+
+            showError(
+                    "Please select a task first."
+            );
+
+            return;
+        }
+
+
+        String title =
+                taskTitleField
+                        .getText()
+                        .trim();
+
+
+        if (title.isEmpty()) {
+
+            showError(
+                    "Please enter a task title."
+            );
+
+            return;
+        }
+
+
+        TaskItem updatedTask =
+                new TaskItem(
+                        title,
+                        taskCompletedCheckBox
+                                .isSelected()
+                );
+
+
+        taskDAO.updateTask(
+                selectedTask.getId(),
+                updatedTask
+        );
+
+
+        loadTasks();
+
+        clearTaskForm();
+
+        showSuccess(
+                "Task updated successfully."
+        );
+    }
+
+
+    @FXML
+    private void deleteTask() {
+
+        TaskItem selectedTask =
+                taskListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (selectedTask == null) {
+
+            showError(
+                    "Please select a task first."
+            );
+
+            return;
+        }
+
+
+        taskDAO.deleteTask(
+                selectedTask.getId()
+        );
+
+
+        loadTasks();
+
+        clearTaskForm();
+
+        showSuccess(
+                "Task deleted successfully."
+        );
+    }
+
+
+    @FXML
+    private void toggleTask() {
+
+        TaskItem selectedTask =
+                taskListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+
+        if (selectedTask == null) {
+
+            showError(
+                    "Please select a task first."
+            );
+
+            return;
+        }
+
+
+        boolean newStatus =
+                !selectedTask.isCompleted();
+
+
+        TaskItem updatedTask =
+                new TaskItem(
+                        selectedTask.getTitle(),
+                        newStatus
+                );
+
+
+        taskDAO.updateTask(
+                selectedTask.getId(),
+                updatedTask
+        );
+
+
+        loadTasks();
+
+        taskCompletedCheckBox
+                .setSelected(newStatus);
+
+
+        showSuccess(
+                newStatus
+                        ? "Task marked as completed."
+                        : "Task marked as incomplete."
+        );
+    }
+
+
+    private void clearTaskForm() {
+
+        taskTitleField.clear();
+
+        taskCompletedCheckBox
+                .setSelected(false);
+
+        taskListView
+                .getSelectionModel()
+                .clearSelection();
+    }
+
+
     // =========================================================
     // READABLE TEXT
     // =========================================================
@@ -1304,22 +2001,21 @@ public class DashboardController {
     private void setupReadableText(Node node) {
 
         if (node instanceof Label) {
-            Label label = (Label) node;
+
+            Label label =
+                    (Label) node;
 
             label.setTextFill(
                     Color.web("#E2E8F0")
             );
-
-            if (label.getFont() == null) {
-                label.setFont(
-                        Font.font("Arial", 14)
-                );
-            }
         }
 
+
         if (node instanceof javafx.scene.Parent) {
+
             for (Node child :
-                    ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
+                    ((javafx.scene.Parent) node)
+                            .getChildrenUnmodifiable()) {
 
                 setupReadableText(child);
             }
@@ -1333,6 +2029,10 @@ public class DashboardController {
 
     private void setupFormLabel(
             Label label) {
+
+        if (label == null) {
+            return;
+        }
 
         label.setFont(
                 Font.font(
@@ -1527,6 +2227,7 @@ public class DashboardController {
         );
     }
 
+
     @FXML
     private void showProjects() {
 
@@ -1539,6 +2240,7 @@ public class DashboardController {
         );
     }
 
+
     @FXML
     private void showSkills() {
 
@@ -1547,9 +2249,10 @@ public class DashboardController {
         pageTitle.setText("Skills");
 
         welcome.setText(
-                "Manage your technical skills."
+                "Manage your technical skills and connect them to projects."
         );
     }
+
 
     @FXML
     private void showNotes() {
@@ -1563,6 +2266,7 @@ public class DashboardController {
         );
     }
 
+
     @FXML
     private void showTasks() {
 
@@ -1574,6 +2278,7 @@ public class DashboardController {
                 "Track your portfolio tasks and progress."
         );
     }
+
 
     @FXML
     private void showApi() {
@@ -1587,6 +2292,7 @@ public class DashboardController {
         );
     }
 
+
     @FXML
     private void showSettings() {
 
@@ -1598,15 +2304,13 @@ public class DashboardController {
                 "Manage application settings."
         );
     }
+
+
     // =========================================================
-    // COMMIT 14 - PORTFOLIO TOOLS
+    // PORTFOLIO TOOLS
     // =========================================================
 
     private void setupPortfolioTools() {
-
-        // -----------------------------------------------------
-        // COMBO BOX
-        // -----------------------------------------------------
 
         technologyComboBox.setItems(
                 FXCollections.observableArrayList(
@@ -1622,10 +2326,6 @@ public class DashboardController {
         );
 
 
-        // -----------------------------------------------------
-        // CHOICE BOX
-        // -----------------------------------------------------
-
         categoryChoiceBox.setItems(
                 FXCollections.observableArrayList(
                         "Web Development",
@@ -1637,17 +2337,15 @@ public class DashboardController {
                 )
         );
 
+
         categoryChoiceBox.setValue(
                 "Desktop Application"
         );
 
 
-        // -----------------------------------------------------
-        // RADIO BUTTONS
-        // -----------------------------------------------------
-
         ToggleGroup priorityGroup =
                 new ToggleGroup();
+
 
         lowPriority.setToggleGroup(
                 priorityGroup
@@ -1661,14 +2359,11 @@ public class DashboardController {
                 priorityGroup
         );
 
+
         mediumPriority.setSelected(
                 true
         );
 
-
-        // -----------------------------------------------------
-        // SLIDER
-        // -----------------------------------------------------
 
         completionSlider
                 .valueProperty()
@@ -1691,10 +2386,6 @@ public class DashboardController {
                 );
 
 
-        // -----------------------------------------------------
-        // SPINNER
-        // -----------------------------------------------------
-
         teamSpinner.setValueFactory(
                 new SpinnerValueFactory
                         .IntegerSpinnerValueFactory(
@@ -1704,10 +2395,6 @@ public class DashboardController {
                 )
         );
 
-
-        // -----------------------------------------------------
-        // LIST VIEW
-        // -----------------------------------------------------
 
         toolsList.setItems(
                 FXCollections.observableArrayList(
@@ -1719,16 +2406,13 @@ public class DashboardController {
                 )
         );
 
+
         toolsList
                 .getSelectionModel()
                 .setSelectionMode(
                         SelectionMode.MULTIPLE
                 );
 
-
-        // -----------------------------------------------------
-        // TREE VIEW
-        // -----------------------------------------------------
 
         TreeItem<String> root =
                 new TreeItem<>(
@@ -1740,6 +2424,7 @@ public class DashboardController {
                 new TreeItem<>(
                         "Programming"
                 );
+
 
         programming.getChildren().addAll(
                 new TreeItem<>("Java"),
@@ -1753,6 +2438,7 @@ public class DashboardController {
                         "Database"
                 );
 
+
         database.getChildren().addAll(
                 new TreeItem<>("SQLite"),
                 new TreeItem<>("MySQL")
@@ -1763,6 +2449,7 @@ public class DashboardController {
                 new TreeItem<>(
                         "Embedded"
                 );
+
 
         embedded.getChildren().addAll(
                 new TreeItem<>("Arduino"),
@@ -1778,18 +2465,18 @@ public class DashboardController {
 
 
         root.setExpanded(true);
-
         programming.setExpanded(true);
 
-        technologyTree.setRoot(root);
 
+        technologyTree.setRoot(
+                root
+        );
 
-        // -----------------------------------------------------
-        // INITIAL PROGRESS
-        // -----------------------------------------------------
 
         portfolioProgress.setProgress(
-                completionSlider.getValue() / 100.0
+                completionSlider
+                        .getValue()
+                        / 100.0
         );
     }
 
@@ -1802,7 +2489,9 @@ public class DashboardController {
 
         if (projectTable != null
                 && content != null
-                && !projectTable.prefWidthProperty().isBound()) {
+                && !projectTable
+                .prefWidthProperty()
+                .isBound()) {
 
             projectTable.prefWidthProperty().bind(
                     content.widthProperty()
@@ -1813,7 +2502,7 @@ public class DashboardController {
 
 
     // =========================================================
-    // FILE CHOOSER + IMAGE VIEW
+    // FILE CHOOSER
     // =========================================================
 
     @FXML
@@ -1821,6 +2510,7 @@ public class DashboardController {
 
         FileChooser fileChooser =
                 new FileChooser();
+
 
         fileChooser.setTitle(
                 "Choose Profile Image"
@@ -1868,7 +2558,7 @@ public class DashboardController {
 
 
     // =========================================================
-    // ABOUT ALERT
+    // ABOUT
     // =========================================================
 
     @FXML
@@ -1879,18 +2569,22 @@ public class DashboardController {
                         Alert.AlertType.INFORMATION
                 );
 
+
         alert.setTitle(
                 "About DevFolio"
         );
+
 
         alert.setHeaderText(
                 "DevFolio - Personal Portfolio Manager"
         );
 
+
         alert.setContentText(
                 "A JavaFX portfolio management application "
                         + "for managing projects, skills, notes and tasks."
         );
+
 
         alert.showAndWait();
     }
@@ -1908,13 +2602,16 @@ public class DashboardController {
                         Alert.AlertType.CONFIRMATION
                 );
 
+
         alert.setTitle(
                 "Exit"
         );
 
+
         alert.setHeaderText(
                 "Exit DevFolio?"
         );
+
 
         alert.setContentText(
                 "Are you sure you want to close the application?"
@@ -1926,6 +2623,7 @@ public class DashboardController {
                 == ButtonType.OK) {
 
             apiExecutor.shutdownNow();
+
             Platform.exit();
         }
     }

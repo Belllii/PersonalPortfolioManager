@@ -8,13 +8,13 @@ import java.util.List;
 
 public class SkillDAO {
 
-    public void insertSkill(Skill skill) {
+    public boolean insertSkill(Skill skill) {
 
         String sql = """
-                INSERT INTO skills
-                (name, category, level)
-                VALUES (?, ?, ?)
-                """;
+            INSERT INTO skills
+            (name, category, level)
+            VALUES (?, ?, ?)
+            """;
 
         try (Connection connection = Database.connect();
              PreparedStatement statement =
@@ -24,10 +24,16 @@ public class SkillDAO {
             statement.setString(2, skill.getCategory());
             statement.setInt(3, skill.getLevel());
 
-            statement.executeUpdate();
+            int rows =
+                    statement.executeUpdate();
+
+            return rows > 0;
 
         } catch (SQLException e) {
+
             e.printStackTrace();
+
+            return false;
         }
     }
 

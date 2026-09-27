@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
+        <?import javafx.geometry.Insets?>
+        <?import javafx.scene.control.*?>
+        <?import javafx.scene.image.ImageView?>
+        <?import javafx.scene.layout.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -14,7 +14,6 @@
     <!-- ===================================================== -->
 
     <left>
-
         <VBox fx:id="sidebar"
               spacing="10"
               prefWidth="210">
@@ -26,8 +25,6 @@
                         left="15"/>
             </padding>
 
-            <!-- LOGO -->
-
             <VBox spacing="5">
 
                 <Label fx:id="logo"
@@ -37,9 +34,6 @@
                        text="Personal Portfolio Manager"/>
 
             </VBox>
-
-
-            <!-- NAVIGATION -->
 
             <Button fx:id="dashboardButton"
                     text="Dashboard"
@@ -204,7 +198,7 @@
 
 
                         <!-- ================================================= -->
-                        <!-- DASHBOARD PAGE -->
+                        <!-- DASHBOARD -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="dashboardPage"
@@ -216,10 +210,6 @@
                             <Label text="Welcome to DevFolio. Use the sidebar to manage your portfolio."
                                    wrapText="true"/>
 
-
-                            <!-- ================================================= -->
-                            <!-- PORTFOLIO TOOLS -->
-                            <!-- ================================================= -->
 
                             <TitledPane text="Portfolio Tools"
                                         expanded="true"
@@ -237,8 +227,6 @@
                                         </padding>
 
 
-                                        <!-- COMBO BOX -->
-
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
 
@@ -251,8 +239,6 @@
                                         </HBox>
 
 
-                                        <!-- CHOICE BOX -->
-
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
 
@@ -264,8 +250,6 @@
                                         </HBox>
 
 
-                                        <!-- DATE PICKER -->
-
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
 
@@ -275,8 +259,6 @@
 
                                         </HBox>
 
-
-                                        <!-- RADIO BUTTONS -->
 
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
@@ -295,13 +277,9 @@
                                         </HBox>
 
 
-                                        <!-- CHECK BOX -->
-
                                         <CheckBox fx:id="featuredCheckBox"
                                                   text="Featured project"/>
 
-
-                                        <!-- SLIDER -->
 
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
@@ -320,8 +298,6 @@
                                         </HBox>
 
 
-                                        <!-- SPINNER -->
-
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
 
@@ -332,8 +308,6 @@
 
                                         </HBox>
 
-
-                                        <!-- PASSWORD FIELD -->
 
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
@@ -346,15 +320,11 @@
                                         </HBox>
 
 
-                                        <!-- TREE VIEW -->
-
                                         <Label text="Technology Categories"/>
 
                                         <TreeView fx:id="technologyTree"
                                                   prefHeight="130"/>
 
-
-                                        <!-- LIST VIEW -->
 
                                         <Label text="Selected Tools"/>
 
@@ -362,16 +332,12 @@
                                                   prefHeight="100"/>
 
 
-                                        <!-- PROGRESS BAR -->
-
                                         <Label text="Portfolio Completion"/>
 
                                         <ProgressBar fx:id="portfolioProgress"
                                                      progress="0.5"
                                                      maxWidth="Infinity"/>
 
-
-                                        <!-- FILE CHOOSER / ABOUT -->
 
                                         <HBox spacing="10">
 
@@ -393,7 +359,7 @@
 
 
                         <!-- ================================================= -->
-                        <!-- PROJECTS PAGE -->
+                        <!-- PROJECTS -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="projectsPage"
@@ -403,8 +369,6 @@
                             <Label fx:id="projectFormTitle"
                                    text="Add / Edit Project"/>
 
-
-                            <!-- PROJECT FORM -->
 
                             <GridPane hgap="10"
                                       vgap="10">
@@ -419,8 +383,6 @@
                                 </columnConstraints>
 
 
-                                <!-- TITLE -->
-
                                 <Label fx:id="projectTitleLabel"
                                        text="Title:"
                                        GridPane.rowIndex="0"
@@ -432,8 +394,6 @@
                                            GridPane.rowIndex="0"
                                            GridPane.columnIndex="1"/>
 
-
-                                <!-- DESCRIPTION -->
 
                                 <Label fx:id="descriptionLabel"
                                        text="Description:"
@@ -448,8 +408,6 @@
                                           GridPane.columnIndex="1"/>
 
 
-                                <!-- TECHNOLOGY -->
-
                                 <Label fx:id="technologyLabel"
                                        text="Technology:"
                                        GridPane.rowIndex="2"
@@ -461,8 +419,6 @@
                                            GridPane.rowIndex="2"
                                            GridPane.columnIndex="1"/>
 
-
-                                <!-- GITHUB -->
 
                                 <Label fx:id="githubLabel"
                                        text="GitHub:"
@@ -477,8 +433,6 @@
 
                             </GridPane>
 
-
-                            <!-- PROJECT BUTTONS -->
 
                             <HBox spacing="10">
 
@@ -503,8 +457,6 @@
 
                             <Separator/>
 
-
-                            <!-- PROJECT TABLE -->
 
                             <Label fx:id="myProjectsLabel"
                                    text="My Projects"/>
@@ -532,8 +484,6 @@
                             </TableView>
 
 
-                            <!-- PROJECT DETAILS -->
-
                             <VBox spacing="5">
 
                                 <Label text="Selected Project"/>
@@ -554,7 +504,7 @@
 
 
                         <!-- ================================================= -->
-                        <!-- SKILLS PAGE -->
+                        <!-- SKILLS -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="skillsPage"
@@ -563,18 +513,172 @@
 
                             <Label text="Skills"/>
 
-                            <Label text="Manage your technical skills here."
+                            <Label text="Create, update and connect your technical skills to projects."
                                    wrapText="true"/>
+
 
                             <Separator/>
 
-                            <Label text="Skills management will be connected to the database next."/>
+
+                            <!-- SKILL FORM -->
+
+                            <TitledPane text="Skill Information"
+                                        expanded="true"
+                                        maxWidth="Infinity">
+
+                                <content>
+
+                                    <GridPane hgap="10"
+                                              vgap="12">
+
+                                        <padding>
+                                            <Insets top="15"
+                                                    right="15"
+                                                    bottom="15"
+                                                    left="15"/>
+                                        </padding>
+
+
+                                        <columnConstraints>
+
+                                            <ColumnConstraints percentWidth="20"/>
+
+                                            <ColumnConstraints percentWidth="80"
+                                                               hgrow="ALWAYS"/>
+
+                                        </columnConstraints>
+
+
+                                        <Label text="Skill Name:"
+                                               GridPane.rowIndex="0"
+                                               GridPane.columnIndex="0"/>
+
+                                        <TextField fx:id="skillNameField"
+                                                   promptText="e.g. Java"
+                                                   maxWidth="Infinity"
+                                                   GridPane.rowIndex="0"
+                                                   GridPane.columnIndex="1"/>
+
+
+                                        <Label text="Category:"
+                                               GridPane.rowIndex="1"
+                                               GridPane.columnIndex="0"/>
+
+                                        <TextField fx:id="skillCategoryField"
+                                                   promptText="e.g. Programming"
+                                                   maxWidth="Infinity"
+                                                   GridPane.rowIndex="1"
+                                                   GridPane.columnIndex="1"/>
+
+
+                                        <Label text="Skill Level:"
+                                               GridPane.rowIndex="2"
+                                               GridPane.columnIndex="0"/>
+
+                                        <HBox spacing="10"
+                                              alignment="CENTER_LEFT"
+                                              GridPane.rowIndex="2"
+                                              GridPane.columnIndex="1">
+
+                                            <Slider fx:id="skillLevelSlider"
+                                                    min="0"
+                                                    max="100"
+                                                    value="50"
+                                                    HBox.hgrow="ALWAYS"/>
+
+                                            <Label fx:id="skillLevelLabel"
+                                                   text="50%"/>
+
+                                        </HBox>
+
+                                    </GridPane>
+
+                                </content>
+
+                            </TitledPane>
+
+
+                            <!-- SKILL BUTTONS -->
+
+                            <HBox spacing="10">
+
+                                <Button fx:id="addSkillButton"
+                                        text="Add Skill"
+                                        onAction="#addSkill"/>
+
+                                <Button fx:id="updateSkillButton"
+                                        text="Update"
+                                        onAction="#updateSkill"/>
+
+                                <Button fx:id="deleteSkillButton"
+                                        text="Delete"
+                                        onAction="#deleteSkill"/>
+
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <Label text="Select a skill to edit it."/>
+
+                            </HBox>
+
+
+                            <Separator/>
+
+
+                            <!-- SKILL LIST -->
+
+                            <Label text="All Skills"/>
+
+                            <ListView fx:id="skillListView"
+                                      prefHeight="180"
+                                      maxWidth="Infinity"/>
+
+
+                            <Separator/>
+
+
+                            <!-- PROJECT SKILLS -->
+
+                            <TitledPane text="Project Skills"
+                                        expanded="true"
+                                        maxWidth="Infinity">
+
+                                <content>
+
+                                    <VBox spacing="10">
+
+                                        <padding>
+                                            <Insets top="15"
+                                                    right="15"
+                                                    bottom="15"
+                                                    left="15"/>
+                                        </padding>
+
+
+                                        <Label text="First select a project from the Projects page, then select a skill above."/>
+
+                                        <Button fx:id="assignSkillButton"
+                                                text="Assign Selected Skill To Selected Project"
+                                                onAction="#assignSkillToProject"/>
+
+
+                                        <Label text="Skills belonging to the selected project:"/>
+
+
+                                        <ListView fx:id="projectSkillListView"
+                                                  prefHeight="150"
+                                                  maxWidth="Infinity"/>
+
+                                    </VBox>
+
+                                </content>
+
+                            </TitledPane>
 
                         </VBox>
 
 
                         <!-- ================================================= -->
-                        <!-- NOTES PAGE -->
+                        <!-- NOTES -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="notesPage"
@@ -583,18 +687,78 @@
 
                             <Label text="Notes"/>
 
-                            <Label text="Manage your portfolio notes here."
+                            <Label text="Create and manage notes for your portfolio."
                                    wrapText="true"/>
+
 
                             <Separator/>
 
-                            <Label text="Notes management will be connected to the database next."/>
+
+                            <HBox spacing="15"
+                                  maxWidth="Infinity">
+
+
+                                <!-- NOTE LIST -->
+
+                                <VBox spacing="10"
+                                      prefWidth="280">
+
+                                    <Label text="My Notes"/>
+
+                                    <ListView fx:id="noteListView"
+                                              prefHeight="400"
+                                              VBox.vgrow="ALWAYS"/>
+
+                                </VBox>
+
+
+                                <!-- NOTE EDITOR -->
+
+                                <VBox spacing="10"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <Label text="Note Title"/>
+
+                                    <TextField fx:id="noteTitleField"
+                                               promptText="Enter note title"
+                                               maxWidth="Infinity"/>
+
+
+                                    <Label text="Note Content"/>
+
+                                    <TextArea fx:id="noteContentArea"
+                                              promptText="Write your note here..."
+                                              wrapText="true"
+                                              prefRowCount="14"
+                                              maxWidth="Infinity"
+                                              VBox.vgrow="ALWAYS"/>
+
+
+                                    <HBox spacing="10">
+
+                                        <Button fx:id="addNoteButton"
+                                                text="Add Note"
+                                                onAction="#addNote"/>
+
+                                        <Button fx:id="updateNoteButton"
+                                                text="Update"
+                                                onAction="#updateNote"/>
+
+                                        <Button fx:id="deleteNoteButton"
+                                                text="Delete"
+                                                onAction="#deleteNote"/>
+
+                                    </HBox>
+
+                                </VBox>
+
+                            </HBox>
 
                         </VBox>
 
 
                         <!-- ================================================= -->
-                        <!-- TASKS PAGE -->
+                        <!-- TASKS -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="tasksPage"
@@ -603,18 +767,80 @@
 
                             <Label text="Tasks"/>
 
-                            <Label text="Track your portfolio tasks here."
+                            <Label text="Track tasks related to your portfolio."
                                    wrapText="true"/>
+
 
                             <Separator/>
 
-                            <Label text="Task management will be connected to the database next."/>
+
+                            <HBox spacing="15"
+                                  maxWidth="Infinity">
+
+
+                                <!-- TASK LIST -->
+
+                                <VBox spacing="10"
+                                      prefWidth="300">
+
+                                    <Label text="My Tasks"/>
+
+                                    <ListView fx:id="taskListView"
+                                              prefHeight="350"
+                                              VBox.vgrow="ALWAYS"/>
+
+                                </VBox>
+
+
+                                <!-- TASK EDITOR -->
+
+                                <VBox spacing="12"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <Label text="Task Title"/>
+
+                                    <TextField fx:id="taskTitleField"
+                                               promptText="Enter task title"
+                                               maxWidth="Infinity"/>
+
+
+                                    <CheckBox fx:id="taskCompletedCheckBox"
+                                              text="Completed"/>
+
+
+                                    <HBox spacing="10">
+
+                                        <Button fx:id="addTaskButton"
+                                                text="Add Task"
+                                                onAction="#addTask"/>
+
+                                        <Button fx:id="updateTaskButton"
+                                                text="Update"
+                                                onAction="#updateTask"/>
+
+                                        <Button fx:id="deleteTaskButton"
+                                                text="Delete"
+                                                onAction="#deleteTask"/>
+
+                                    </HBox>
+
+
+                                    <Separator/>
+
+
+                                    <Button fx:id="toggleTaskButton"
+                                            text="Mark Complete / Incomplete"
+                                            onAction="#toggleTask"/>
+
+                                </VBox>
+
+                            </HBox>
 
                         </VBox>
 
 
                         <!-- ================================================= -->
-                        <!-- API PAGE -->
+                        <!-- API -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="apiPage"
@@ -623,25 +849,20 @@
 
                             <Label text="External API"/>
 
-
                             <Label text="HTTP Request + JSON Parsing"/>
-
 
                             <Button fx:id="fetchApiButton"
                                     text="Fetch API Data"
                                     onAction="#fetchApiData"/>
 
-
                             <Label fx:id="apiStatusLabel"
                                    text="Status: Ready"/>
-
 
                             <TextArea fx:id="apiResultArea"
                                       promptText="API response will appear here..."
                                       prefRowCount="12"
                                       wrapText="true"
                                       maxWidth="Infinity"/>
-
 
                             <ProgressBar fx:id="apiProgress"
                                          progress="0"
@@ -651,7 +872,7 @@
 
 
                         <!-- ================================================= -->
-                        <!-- SETTINGS PAGE -->
+                        <!-- SETTINGS -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="settingsPage"
