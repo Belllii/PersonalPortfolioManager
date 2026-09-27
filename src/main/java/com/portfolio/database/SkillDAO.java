@@ -24,15 +24,12 @@ public class SkillDAO {
             statement.setString(2, skill.getCategory());
             statement.setInt(3, skill.getLevel());
 
-            int rows =
-                    statement.executeUpdate();
+            int rows = statement.executeUpdate();
 
             return rows > 0;
 
         } catch (SQLException e) {
-
             e.printStackTrace();
-
             return false;
         }
     }
@@ -42,7 +39,7 @@ public class SkillDAO {
         List<Skill> skills = new ArrayList<>();
 
         String sql = "SELECT * FROM skills";
-
+        System.out.println("Running: " + sql);
         try (Connection connection = Database.connect();
              PreparedStatement statement =
                      connection.prepareStatement(sql);
@@ -50,7 +47,10 @@ public class SkillDAO {
                      statement.executeQuery()) {
 
             while (resultSet.next()) {
-
+                System.out.println(
+                        "Found skill: "
+                                + resultSet.getString("name")
+                );
                 Skill skill = new Skill(
                         resultSet.getString("name"),
                         resultSet.getString("category"),
@@ -62,6 +62,7 @@ public class SkillDAO {
                 );
 
                 skills.add(skill);
+
             }
 
         } catch (SQLException e) {

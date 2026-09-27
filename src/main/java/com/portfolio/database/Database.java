@@ -11,10 +11,18 @@ public class Database {
             "jdbc:sqlite:portfolio.db";
 
 
-    public static Connection connect()
-            throws SQLException {
+    public static Connection connect() throws SQLException {
 
-        return DriverManager.getConnection(URL);
+        Connection connection =
+                DriverManager.getConnection(URL);
+
+        System.out.println(
+                "Connected to database: "
+                        + new java.io.File("portfolio.db")
+                        .getAbsolutePath()
+        );
+
+        return connection;
     }
     public static void createTables() {
 
@@ -75,6 +83,13 @@ public class Database {
             statement.execute(projectSkillsSql);
             statement.execute(notesSql);
             statement.execute(tasksSql);
+
+            try {
+                statement.execute("ALTER TABLE skills ADD COLUMN category TEXT NOT NULL DEFAULT ''");
+            } catch (SQLException ignored) {
+                // Column already exists
+            }
+
             System.out.println(
                     "Database tables created successfully."
             );

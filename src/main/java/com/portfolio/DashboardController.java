@@ -336,6 +336,9 @@ public class DashboardController {
     @FXML
     private Button assignSkillButton;
 
+    @FXML
+    private Label skillMessage;
+
     private final ObservableList<Skill> skillList =
             FXCollections.observableArrayList();
 
@@ -1037,26 +1040,46 @@ public class DashboardController {
     private void showSuccess(
             String message) {
 
-        projectMessage.setText(
-                message
-        );
+        if (projectMessage != null) {
+            projectMessage.setText(
+                    message
+            );
+            projectMessage.setTextFill(
+                    Color.web("#38BDF8")
+            );
+        }
 
-        projectMessage.setTextFill(
-                Color.web("#38BDF8")
-        );
+        if (skillMessage != null) {
+            skillMessage.setText(
+                    message
+            );
+            skillMessage.setTextFill(
+                    Color.web("#38BDF8")
+            );
+        }
     }
 
 
     private void showError(
             String message) {
 
-        projectMessage.setText(
-                message
-        );
+        if (projectMessage != null) {
+            projectMessage.setText(
+                    message
+            );
+            projectMessage.setTextFill(
+                    Color.web("#F87171")
+            );
+        }
 
-        projectMessage.setTextFill(
-                Color.web("#F87171")
-        );
+        if (skillMessage != null) {
+            skillMessage.setText(
+                    message
+            );
+            skillMessage.setTextFill(
+                    Color.web("#F87171")
+            );
+        }
     }
 
 
@@ -1064,6 +1087,18 @@ public class DashboardController {
     // SKILLS
     // =========================================================
     private void setupSkills() {
+
+        setupTextField(skillNameField);
+        setupTextField(skillCategoryField);
+
+        setupActionButton(addSkillButton);
+        setupActionButton(updateSkillButton);
+        setupDeleteButton(deleteSkillButton);
+        setupActionButton(assignSkillButton);
+
+        if (skillMessage != null) {
+            skillMessage.setTextFill(Color.web("#38BDF8"));
+        }
 
         // Connect the ObservableList to the ListView
         skillListView.setItems(skillList);
@@ -1097,8 +1132,11 @@ public class DashboardController {
 
                     setText(text);
 
-                    // Explicitly make the text visible
-                    setTextFill(Color.BLACK);
+                    if (isSelected()) {
+                        setTextFill(Color.WHITE);
+                    } else {
+                        setTextFill(Color.BLACK);
+                    }
 
                     setFont(
                             Font.font(
@@ -1196,6 +1234,7 @@ public class DashboardController {
                         if (empty || skill == null) {
 
                             setText("");
+                            setGraphic(null);
 
                         } else {
 
@@ -1208,7 +1247,11 @@ public class DashboardController {
                                             + "%)"
                             );
 
-                            setTextFill(Color.BLACK);
+                            if (isSelected()) {
+                                setTextFill(Color.WHITE);
+                            } else {
+                                setTextFill(Color.BLACK);
+                            }
 
                             setFont(
                                     Font.font(
@@ -1228,6 +1271,7 @@ public class DashboardController {
 
         loadSkills();
     }
+
     private void loadSkills() {
 
         System.out.println("================================");
@@ -1258,7 +1302,6 @@ public class DashboardController {
 
             skillList.addAll(skills);
 
-            // Tell the ListView to redraw
             skillListView.refresh();
 
             System.out.println(
@@ -1271,86 +1314,50 @@ public class DashboardController {
 
         } catch (Exception e) {
 
-            System.out.println(
-                    "ERROR WHILE LOADING SKILLS:"
-            );
-
             e.printStackTrace();
         }
     }
-
     @FXML
     private void addSkill() {
 
-        String name =
-                skillNameField.getText().trim();
+        String name = (skillNameField.getText() == null) ? "" : skillNameField.getText().trim();
+        String category = (skillCategoryField.getText() == null) ? "" : skillCategoryField.getText().trim();
+        int level = (int) skillLevelSlider.getValue();
 
-        String category =
-                skillCategoryField.getText().trim();
-
-        int level =
-                (int) skillLevelSlider.getValue();
-
-
-        if (name.isEmpty()
-                || category.isEmpty()) {
-
-            showError(
-                    "Please enter skill name and category."
-            );
-
+        if (name.isEmpty() || category.isEmpty()) {
+            showError("Please enter skill name and category.");
             return;
         }
 
-
         try {
 
-            Skill skill =
-                    new Skill(
-                            name,
-                            category,
-                            level
-                    );
+            Skill skill = new Skill(name, category, level);
 
+            boolean inserted = skillDAO.insertSkill(skill);
 
-            boolean inserted =
-                    skillDAO.insertSkill(skill);
+            if (inserted) {
 
+                System.out.println("Skill inserted successfully: " + name);
 
-            if (!inserted) {
+                loadSkills();
 
-                showError(
-                        "Skill could not be inserted into the database."
-                );
+                clearSkillForm();
 
-                return;
+                showSuccess("Skill added successfully.");
+
+            } else {
+
+                System.out.println("Skill was NOT inserted.");
+
+                showError("Could not add skill.");
+
             }
-
-
-            System.out.println(
-                    "Skill successfully inserted: "
-                            + name
-            );
-
-
-            loadSkills();
-
-            clearSkillForm();
-
-
-            showSuccess(
-                    "Skill added successfully."
-            );
-
 
         } catch (Exception e) {
 
             e.printStackTrace();
 
-            showError(
-                    "Could not add skill: "
-                            + e.getMessage()
-            );
+            showError("Could not add skill: " + e.getMessage());
         }
     }
 
@@ -1374,14 +1381,14 @@ public class DashboardController {
 
 
         String name =
-                skillNameField
-                        .getText()
-                        .trim();
+                (skillNameField.getText() == null)
+                        ? ""
+                        : skillNameField.getText().trim();
 
         String category =
-                skillCategoryField
-                        .getText()
-                        .trim();
+                (skillCategoryField.getText() == null)
+                        ? ""
+                        : skillCategoryField.getText().trim();
 
         int level =
                 (int) skillLevelSlider.getValue();
@@ -2251,6 +2258,8 @@ public class DashboardController {
         welcome.setText(
                 "Manage your technical skills and connect them to projects."
         );
+
+        loadSkills();
     }
 
 

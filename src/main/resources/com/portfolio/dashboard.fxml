@@ -616,7 +616,8 @@
 
                                 <Region HBox.hgrow="ALWAYS"/>
 
-                                <Label text="Select a skill to edit it."/>
+                                <Label fx:id="skillMessage"
+                                       text="Select a skill to edit it."/>
 
                             </HBox>
 
