@@ -1,6 +1,7 @@
-package com.portfolio;
+  package com.portfolio;
 
 import com.portfolio.database.ProjectDAO;
+import com.portfolio.database.SkillDAO;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -41,9 +42,10 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
+import javafx.scene.Node;
 
 import javafx.scene.paint.Color;
-
+import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import java.util.concurrent.ExecutorService;
@@ -65,6 +67,9 @@ public class DashboardController {
 
     @FXML
     private VBox content;
+
+    @FXML
+    private StackPane pageContainer;
 
     @FXML
     private Label logo;
@@ -245,7 +250,30 @@ public class DashboardController {
     @FXML
     private ImageView profileImage;
 
+// =========================================================
+// PAGE NAVIGATION
+// =========================================================
 
+    @FXML
+    private VBox dashboardPage;
+
+    @FXML
+    private VBox projectsPage;
+
+    @FXML
+    private VBox skillsPage;
+
+    @FXML
+    private VBox notesPage;
+
+    @FXML
+    private VBox tasksPage;
+
+    @FXML
+    private VBox apiPage;
+
+    @FXML
+    private VBox settingsPage;
     // =========================================================
     // DATABASE DATA
     // =========================================================
@@ -255,7 +283,51 @@ public class DashboardController {
 
     private final ProjectDAO projectDAO =
             new ProjectDAO();
+// =========================================================
+// COMMIT 12 - SKILLS
+// =========================================================
 
+    @FXML
+    private VBox skillsSection;
+
+    @FXML
+    private TextField skillNameField;
+
+    @FXML
+    private TextField skillCategoryField;
+
+    @FXML
+    private Slider skillLevelSlider;
+
+    @FXML
+    private Label skillLevelLabel;
+
+    @FXML
+    private ListView<Skill> skillListView;
+
+    @FXML
+    private ListView<Skill> projectSkillListView;
+
+    @FXML
+    private Button addSkillButton;
+
+    @FXML
+    private Button updateSkillButton;
+
+    @FXML
+    private Button deleteSkillButton;
+
+    @FXML
+    private Button assignSkillButton;
+
+    private final ObservableList<Skill> skillList =
+            FXCollections.observableArrayList();
+
+    private final ObservableList<Skill> projectSkillList =
+            FXCollections.observableArrayList();
+
+    private final SkillDAO skillDAO =
+            new SkillDAO();
 // =========================================================
 // COMMIT 15 - HTTP + JSON
 // =========================================================
@@ -301,11 +373,11 @@ public class DashboardController {
                     );
 
                     apiProgress.setProgress(1);
+                    apiStatusLabel.setText(
+                            "Status: Completed"
+                    );
 
                 });
-                apiStatusLabel.setText(
-                        "Status: Completed"
-                );
 
             } catch (Exception e) {
 
@@ -320,14 +392,41 @@ public class DashboardController {
                     );
 
                     apiProgress.setProgress(0);
+                    apiStatusLabel.setText(
+                            "Status: Failed"
+                    );
 
                 });
-                apiStatusLabel.setText(
-                        "Status: Failed"
-                );
             }
         });
 
+    }
+
+    private void showPage(VBox page) {
+
+        dashboardPage.setVisible(false);
+        dashboardPage.setManaged(false);
+
+        projectsPage.setVisible(false);
+        projectsPage.setManaged(false);
+
+        skillsPage.setVisible(false);
+        skillsPage.setManaged(false);
+
+        notesPage.setVisible(false);
+        notesPage.setManaged(false);
+
+        tasksPage.setVisible(false);
+        tasksPage.setManaged(false);
+
+        apiPage.setVisible(false);
+        apiPage.setManaged(false);
+
+        settingsPage.setVisible(false);
+        settingsPage.setManaged(false);
+
+        page.setVisible(true);
+        page.setManaged(true);
     }
     // =========================================================
     // INITIALIZE
@@ -359,6 +458,10 @@ public class DashboardController {
                         )
                 )
         );
+
+        // Make normal labels readable on the dark application background.
+        setupReadableText(content);
+        setupReadableText(sidebar);
 
 
         // -----------------------------------------------------
@@ -452,6 +555,19 @@ public class DashboardController {
 
         setupFormLabel(projectFormTitle);
 
+        if (apiStatusLabel != null) {
+            apiStatusLabel.setTextFill(Color.web("#38BDF8"));
+            apiStatusLabel.setFont(
+                    Font.font("Arial", FontWeight.BOLD, 14)
+            );
+        }
+
+        if (apiResultArea != null) {
+            apiResultArea.setFont(
+                    Font.font("Consolas", 13)
+            );
+        }
+
 
         // -----------------------------------------------------
         // PROJECT TITLE
@@ -468,6 +584,11 @@ public class DashboardController {
         myProjectsLabel.setTextFill(
                 Color.WHITE
         );
+
+        setupFormLabel(detailTitle);
+        setupFormLabel(detailTechnology);
+        setupFormLabel(detailDescription);
+        setupFormLabel(detailGithub);
 
 
         // -----------------------------------------------------
@@ -546,6 +667,10 @@ public class DashboardController {
                                 loadProjectIntoForm(
                                         selectedProject
                                 );
+
+                                loadProjectSkills(
+                                        selectedProject.getId()
+                                );
                             }
                         }
                 );
@@ -556,8 +681,9 @@ public class DashboardController {
         // -----------------------------------------------------
 
         setupPortfolioTools();
-
+        setupSkills();
         setupResponsiveLayout();
+        showPage(dashboardPage);
     }
 
 
@@ -883,6 +1009,323 @@ public class DashboardController {
         );
     }
 
+// =========================================================
+// SKILLS SETUP
+// =========================================================
+
+    private void setupSkills() {
+
+        // The current FXML may still contain the Skills placeholder.
+        // Do not let missing skill controls crash application startup.
+        if (skillListView == null
+                || projectSkillListView == null
+                || skillNameField == null
+                || skillCategoryField == null
+                || skillLevelSlider == null
+                || skillLevelLabel == null) {
+            return;
+        }
+
+        skillListView.setItems(skillList);
+
+        projectSkillListView.setItems(
+                projectSkillList
+        );
+
+        skillLevelSlider.setMin(0);
+        skillLevelSlider.setMax(100);
+        skillLevelSlider.setValue(50);
+
+        skillLevelLabel.setText("50%");
+
+        skillLevelSlider.valueProperty()
+                .addListener((observable, oldValue, newValue) -> {
+
+                    skillLevelLabel.setText(
+                            String.format(
+                                    "%.0f%%",
+                                    newValue.doubleValue()
+                            )
+                    );
+                });
+
+        skillListView
+                .getSelectionModel()
+                .selectedItemProperty()
+                .addListener(
+                        (observable,
+                         oldSkill,
+                         selectedSkill) -> {
+
+                            if (selectedSkill != null) {
+
+                                skillNameField.setText(
+                                        selectedSkill.getName()
+                                );
+
+                                skillCategoryField.setText(
+                                        selectedSkill.getCategory()
+                                );
+
+                                skillLevelSlider.setValue(
+                                        selectedSkill.getLevel()
+                                );
+                            }
+                        }
+                );
+
+        loadSkills();
+    }
+    private void loadSkills() {
+
+        skillList.clear();
+
+        skillList.addAll(
+                skillDAO.getAllSkills()
+        );
+    }
+    // =========================================================
+// ADD SKILL
+// =========================================================
+
+    @FXML
+    private void addSkill() {
+
+        String name =
+                skillNameField.getText().trim();
+
+        String category =
+                skillCategoryField.getText().trim();
+
+        int level =
+                (int) skillLevelSlider.getValue();
+
+        if (name.isEmpty()
+                || category.isEmpty()) {
+
+            showError(
+                    "Please enter skill name and category."
+            );
+
+            return;
+        }
+
+        Skill skill =
+                new Skill(
+                        name,
+                        category,
+                        level
+                );
+
+        skillDAO.insertSkill(skill);
+
+        loadSkills();
+
+        clearSkillForm();
+
+        showSuccess(
+                "Skill added successfully."
+        );
+    }
+    // =========================================================
+// UPDATE SKILL
+// =========================================================
+
+    @FXML
+    private void updateSkill() {
+
+        Skill selectedSkill =
+                skillListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedSkill == null) {
+
+            showError(
+                    "Please select a skill first."
+            );
+
+            return;
+        }
+
+        String name =
+                skillNameField.getText().trim();
+
+        String category =
+                skillCategoryField.getText().trim();
+
+        int level =
+                (int) skillLevelSlider.getValue();
+
+        if (name.isEmpty()
+                || category.isEmpty()) {
+
+            showError(
+                    "Please enter skill name and category."
+            );
+
+            return;
+        }
+
+        Skill updatedSkill =
+                new Skill(
+                        name,
+                        category,
+                        level
+                );
+
+        skillDAO.updateSkill(
+                selectedSkill.getId(),
+                updatedSkill
+        );
+
+        loadSkills();
+
+        clearSkillForm();
+
+        showSuccess(
+                "Skill updated successfully."
+        );
+    }
+    // =========================================================
+// DELETE SKILL
+// =========================================================
+
+    @FXML
+    private void deleteSkill() {
+
+        Skill selectedSkill =
+                skillListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedSkill == null) {
+
+            showError(
+                    "Please select a skill first."
+            );
+
+            return;
+        }
+
+        skillDAO.deleteSkill(
+                selectedSkill.getId()
+        );
+
+        loadSkills();
+
+        projectSkillList.clear();
+
+        clearSkillForm();
+
+        showSuccess(
+                "Skill deleted successfully."
+        );
+    }
+    // =========================================================
+// ASSIGN SKILL TO PROJECT
+// =========================================================
+
+    @FXML
+    private void assignSkillToProject() {
+
+        Project selectedProject =
+                projectTable
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+        Skill selectedSkill =
+                skillListView
+                        .getSelectionModel()
+                        .getSelectedItem();
+
+        if (selectedProject == null) {
+
+            showError(
+                    "Please select a project first."
+            );
+
+            return;
+        }
+
+        if (selectedSkill == null) {
+
+            showError(
+                    "Please select a skill first."
+            );
+
+            return;
+        }
+
+        skillDAO.assignSkillToProject(
+                selectedProject.getId(),
+                selectedSkill.getId()
+        );
+
+        loadProjectSkills(
+                selectedProject.getId()
+        );
+
+        showSuccess(
+                "Skill assigned to project."
+        );
+    }
+    private void loadProjectSkills(
+            int projectId) {
+
+        if (projectSkillListView == null) {
+            return;
+        }
+
+        projectSkillList.clear();
+
+        projectSkillList.addAll(
+                skillDAO.getSkillsForProject(
+                        projectId
+                )
+        );
+    }
+    private void clearSkillForm() {
+
+        skillNameField.clear();
+
+        skillCategoryField.clear();
+
+        skillLevelSlider.setValue(50);
+
+        skillListView
+                .getSelectionModel()
+                .clearSelection();
+    }
+    // =========================================================
+    // READABLE TEXT
+    // =========================================================
+
+    private void setupReadableText(Node node) {
+
+        if (node instanceof Label) {
+            Label label = (Label) node;
+
+            label.setTextFill(
+                    Color.web("#E2E8F0")
+            );
+
+            if (label.getFont() == null) {
+                label.setFont(
+                        Font.font("Arial", 14)
+                );
+            }
+        }
+
+        if (node instanceof javafx.scene.Parent) {
+            for (Node child :
+                    ((javafx.scene.Parent) node).getChildrenUnmodifiable()) {
+
+                setupReadableText(child);
+            }
+        }
+    }
+
 
     // =========================================================
     // FORM LABEL STYLE
@@ -1075,94 +1518,86 @@ public class DashboardController {
     @FXML
     private void showDashboard() {
 
-        pageTitle.setText(
-                "Dashboard"
-        );
+        showPage(dashboardPage);
+
+        pageTitle.setText("Dashboard");
 
         welcome.setText(
                 "Welcome back! Here's an overview of your portfolio."
         );
     }
 
-
     @FXML
     private void showProjects() {
 
-        pageTitle.setText(
-                "Projects"
-        );
+        showPage(projectsPage);
+
+        pageTitle.setText("Projects");
 
         welcome.setText(
                 "Add, update and manage your portfolio projects."
         );
     }
 
-
     @FXML
     private void showSkills() {
 
-        pageTitle.setText(
-                "Skills"
-        );
+        showPage(skillsPage);
+
+        pageTitle.setText("Skills");
 
         welcome.setText(
-                "Track your technical skills."
+                "Manage your technical skills."
         );
     }
-
 
     @FXML
     private void showNotes() {
 
-        pageTitle.setText(
-                "Notes"
-        );
+        showPage(notesPage);
+
+        pageTitle.setText("Notes");
 
         welcome.setText(
-                "Keep your important development notes."
+                "Create and manage your portfolio notes."
         );
     }
-
 
     @FXML
     private void showTasks() {
 
-        pageTitle.setText(
-                "Tasks"
-        );
+        showPage(tasksPage);
+
+        pageTitle.setText("Tasks");
 
         welcome.setText(
-                "Manage your development tasks."
+                "Track your portfolio tasks and progress."
         );
     }
-
 
     @FXML
     private void showApi() {
 
-        pageTitle.setText(
-                "API Data"
-        );
+        showPage(apiPage);
+
+        pageTitle.setText("API");
 
         welcome.setText(
-                "External data and API information."
+                "Fetch and process data from an external API."
         );
     }
-
 
     @FXML
     private void showSettings() {
 
-        pageTitle.setText(
-                "Settings"
-        );
+        showPage(settingsPage);
+
+        pageTitle.setText("Settings");
 
         welcome.setText(
-                "Application settings."
+                "Manage application settings."
         );
     }
-
-
     // =========================================================
     // COMMIT 14 - PORTFOLIO TOOLS
     // =========================================================
@@ -1366,16 +1801,12 @@ public class DashboardController {
     private void setupResponsiveLayout() {
 
         if (projectTable != null
-                && content != null) {
+                && content != null
+                && !projectTable.prefWidthProperty().isBound()) {
 
             projectTable.prefWidthProperty().bind(
                     content.widthProperty()
-                            .subtract(20)
-            );
-
-            projectTable.prefWidthProperty().bind(
-                    content.widthProperty()
-                            .subtract(20)
+                            .subtract(50)
             );
         }
     }
@@ -1494,6 +1925,7 @@ public class DashboardController {
                 .orElse(null)
                 == ButtonType.OK) {
 
+            apiExecutor.shutdownNow();
             Platform.exit();
         }
     }
