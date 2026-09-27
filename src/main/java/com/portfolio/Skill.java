@@ -1,8 +1,7 @@
 package com.portfolio;
 
-public class Skill {
+public class Skill extends PortfolioEntity {
 
-    private int id;
     private String name;
     private String category;
     private int level;
@@ -13,12 +12,19 @@ public class Skill {
         this.level = level;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public String getCategoryType() {
+        return "Skill";
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public String getDisplayName() {
+        return name;
+    }
+
+    @Override
+    public String getDetails() {
+        return category + " (" + level + "%)";
     }
 
     public String getName() {

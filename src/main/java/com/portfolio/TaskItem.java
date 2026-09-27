@@ -1,8 +1,7 @@
 package com.portfolio;
 
-public class TaskItem {
+public class TaskItem extends PortfolioEntity {
 
-    private int id;
     private String title;
     private boolean completed;
 
@@ -11,12 +10,19 @@ public class TaskItem {
         this.completed = completed;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public String getCategoryType() {
+        return "Task";
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public String getDisplayName() {
+        return title;
+    }
+
+    @Override
+    public String getDetails() {
+        return completed ? "Completed" : "Pending";
     }
 
     public String getTitle() {

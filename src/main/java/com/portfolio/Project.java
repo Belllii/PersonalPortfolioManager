@@ -1,11 +1,12 @@
 package com.portfolio;
-public class Project {
-    private int id;
+
+public class Project extends PortfolioEntity {
+
     private String title;
     private String description;
     private String technology;
     private String githubLink;
-    // CONSTRUCTOR
+
     public Project(
             String title,
             String description,
@@ -16,39 +17,50 @@ public class Project {
         this.technology = technology;
         this.githubLink = githubLink;
     }
-    // ID
-    public int getId() {
-        return id;
+
+    @Override
+    public String getCategoryType() {
+        return "Project";
     }
-    public void setId(int id) {
-        this.id = id;
+
+    @Override
+    public String getDisplayName() {
+        return title;
     }
-    // TITLE
+
+    @Override
+    public String getDetails() {
+        return technology + " | " + description;
+    }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
-    // DESCRIPTION
+
     public String getDescription() {
         return description;
     }
+
     public void setDescription(String description) {
         this.description = description;
     }
-    // TECHNOLOGY
+
     public String getTechnology() {
         return technology;
     }
+
     public void setTechnology(String technology) {
         this.technology = technology;
     }
-    // GITHUB LINK
 
     public String getGithubLink() {
         return githubLink;
     }
+
     public void setGithubLink(String githubLink) {
         this.githubLink = githubLink;
     }

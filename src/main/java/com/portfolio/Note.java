@@ -1,8 +1,7 @@
 package com.portfolio;
 
-public class Note {
+public class Note extends PortfolioEntity {
 
-    private int id;
     private String title;
     private String content;
 
@@ -11,12 +10,19 @@ public class Note {
         this.content = content;
     }
 
-    public int getId() {
-        return id;
+    @Override
+    public String getCategoryType() {
+        return "Note";
     }
 
-    public void setId(int id) {
-        this.id = id;
+    @Override
+    public String getDisplayName() {
+        return title;
+    }
+
+    @Override
+    public String getDetails() {
+        return content;
     }
 
     public String getTitle() {

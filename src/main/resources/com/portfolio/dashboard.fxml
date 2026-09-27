@@ -35,6 +35,11 @@
 
             </VBox>
 
+            <Button fx:id="welcomeButton"
+                    text="Welcome"
+                    onAction="#showWelcome"
+                    maxWidth="Infinity"/>
+
             <Button fx:id="dashboardButton"
                     text="Dashboard"
                     onAction="#showDashboard"
@@ -115,6 +120,9 @@
                             <MenuItem text="Choose Profile Image"
                                       onAction="#chooseImage"/>
 
+                            <MenuItem text="Preview Selected in New Window"
+                                      onAction="#openProjectPreviewWindow"/>
+
                             <SeparatorMenuItem/>
 
                             <MenuItem text="Exit"
@@ -124,6 +132,9 @@
 
 
                         <Menu text="View">
+
+                            <MenuItem text="Welcome"
+                                      onAction="#showWelcome"/>
 
                             <MenuItem text="Dashboard"
                                       onAction="#showDashboard"/>
@@ -198,26 +209,283 @@
 
 
                         <!-- ================================================= -->
-                        <!-- DASHBOARD -->
+                        <!-- WELCOME PAGE (Stage 31 Welcome Experience) -->
+                        <!-- ================================================= -->
+
+                        <VBox fx:id="welcomePage"
+                              spacing="20"
+                              maxWidth="Infinity">
+
+                            <!-- HERO BANNER -->
+                            <VBox fx:id="welcomeHero"
+                                  spacing="14">
+
+                                <padding>
+                                    <Insets top="25"
+                                            right="25"
+                                            bottom="25"
+                                            left="25"/>
+                                </padding>
+
+                                <Label fx:id="welcomeHeading"
+                                       text="Welcome to DevFolio 👋"/>
+
+                                <Label fx:id="welcomeSubheading"
+                                       text="Your centralized personal portfolio and desktop engineering workstation. Organize software projects, quantify your technical skills, save developer notes, and test external APIs effortlessly."
+                                       wrapText="true"/>
+
+                                <HBox spacing="12"
+                                      alignment="CENTER_LEFT">
+
+                                    <Button fx:id="welcomeDashBtn"
+                                            text="📊 Go to Dashboard"
+                                            onAction="#showDashboard"/>
+
+                                    <Button fx:id="welcomeProjBtn"
+                                            text="📁 Manage Projects"
+                                            onAction="#showProjects"/>
+
+                                    <Button fx:id="welcomeSkillsBtn"
+                                            text="⚡ Manage Skills"
+                                            onAction="#showSkills"/>
+
+                                    <Button fx:id="welcomeNotesBtn"
+                                            text="📝 Quick Notes"
+                                            onAction="#showNotes"/>
+
+                                    <Button fx:id="welcomeTasksBtn"
+                                            text="✅ View Tasks"
+                                            onAction="#showTasks"/>
+
+                                </HBox>
+
+                            </VBox>
+
+
+                            <!-- FEATURES HIGHLIGHT (Stage 8 FlowPane layout) -->
+                            <Label fx:id="welcomeFeaturesTitle"
+                                   text="Core Capabilities &amp; Architecture"/>
+
+                            <FlowPane hgap="16"
+                                      vgap="16"
+                                      maxWidth="Infinity">
+
+                                <VBox fx:id="featureCard1"
+                                      prefWidth="260"
+                                      spacing="8">
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+                                    <Label fx:id="featureTitle1"
+                                           text="📁 Project Workstation"/>
+                                    <Label text="Document project repositories, technology stacks, and associate competencies with SQLite persistence."
+                                           wrapText="true"/>
+                                </VBox>
+
+                                <VBox fx:id="featureCard2"
+                                      prefWidth="260"
+                                      spacing="8">
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+                                    <Label fx:id="featureTitle2"
+                                           text="⚡ Technical Skills Matrix"/>
+                                    <Label text="Quantify proficiencies from 0 to 100%, group by categories, and associate with projects via many-to-many relations."
+                                           wrapText="true"/>
+                                </VBox>
+
+                                <VBox fx:id="featureCard3"
+                                      prefWidth="260"
+                                      spacing="8">
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+                                    <Label fx:id="featureTitle3"
+                                           text="📝 Productivity &amp; Todo"/>
+                                    <Label text="Capture ideas, technical notes, and maintain task items with instant completion status toggling."
+                                           wrapText="true"/>
+                                </VBox>
+
+                                <VBox fx:id="featureCard4"
+                                      prefWidth="260"
+                                      spacing="8">
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+                                    <Label fx:id="featureTitle4"
+                                           text="🌐 REST API &amp; Multithreading"/>
+                                    <Label text="Demonstrates background worker threads and thread pools using Java HttpClient and Gson parser."
+                                           wrapText="true"/>
+                                </VBox>
+
+                            </FlowPane>
+
+
+                            <!-- SYSTEM STATUS -->
+                            <HBox spacing="20"
+                                  alignment="CENTER_LEFT">
+
+                                <Label fx:id="dbStatusBadge"
+                                       text="● Database: SQLite portfolio.db Connected"/>
+
+                                <Label fx:id="systemUptimeLabel"
+                                       text="● Engine: JavaFX 21 on Java 17+"/>
+
+                            </HBox>
+
+                        </VBox>
+
+
+                        <!-- ================================================= -->
+                        <!-- DASHBOARD (Stage 31 Beautiful Polished Dashboard) -->
                         <!-- ================================================= -->
 
                         <VBox fx:id="dashboardPage"
-                              spacing="15"
+                              spacing="18"
                               maxWidth="Infinity">
 
-                            <Label text="Portfolio Overview"/>
+                            <!-- DASHBOARD TOP HEADER & LIVE THREAD CLOCK (Stage 26) -->
+                            <HBox spacing="15"
+                                  alignment="CENTER_LEFT">
 
-                            <Label text="Welcome to DevFolio. Use the sidebar to manage your portfolio."
-                                   wrapText="true"/>
+                                <VBox spacing="4"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <Label fx:id="dashOverviewTitle"
+                                           text="Portfolio Analytics &amp; Control Hub"/>
+
+                                    <Label fx:id="dashOverviewSubtitle"
+                                           text="Live overview synchronized with local SQLite database."/>
+
+                                </VBox>
+
+                                <VBox alignment="CENTER_RIGHT"
+                                      spacing="3">
+
+                                    <Label fx:id="liveClockLabel"
+                                           text="Syncing clock..."/>
+
+                                    <Label fx:id="systemStatusBadge"
+                                           text="● Background Daemon Active"/>
+
+                                </VBox>
+
+                            </HBox>
 
 
-                            <TitledPane text="Portfolio Tools"
+                            <!-- 4 KPI STATISTIC CARDS (Stage 31) -->
+                            <HBox spacing="15"
+                                  maxWidth="Infinity">
+
+                                <!-- CARD 1: PROJECTS -->
+                                <VBox fx:id="statCard1"
+                                      spacing="6"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+
+                                    <Label fx:id="statLabel1"
+                                           text="TOTAL PROJECTS"/>
+
+                                    <Label fx:id="statProjectsCount"
+                                           text="0"/>
+
+                                    <Label fx:id="statSub1"
+                                           text="Active software repositories"/>
+
+                                </VBox>
+
+                                <!-- CARD 2: SKILLS -->
+                                <VBox fx:id="statCard2"
+                                      spacing="6"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+
+                                    <Label fx:id="statLabel2"
+                                           text="TOTAL SKILLS"/>
+
+                                    <Label fx:id="statSkillsCount"
+                                           text="0"/>
+
+                                    <Label fx:id="statSub2"
+                                           text="Technical proficiencies"/>
+
+                                </VBox>
+
+                                <!-- CARD 3: NOTES -->
+                                <VBox fx:id="statCard3"
+                                      spacing="6"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+
+                                    <Label fx:id="statLabel3"
+                                           text="SAVED NOTES"/>
+
+                                    <Label fx:id="statNotesCount"
+                                           text="0"/>
+
+                                    <Label fx:id="statSub3"
+                                           text="Developer notes"/>
+
+                                </VBox>
+
+                                <!-- CARD 4: TASKS -->
+                                <VBox fx:id="statCard4"
+                                      spacing="6"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <padding>
+                                        <Insets top="16" right="16" bottom="16" left="16"/>
+                                    </padding>
+
+                                    <Label fx:id="statLabel4"
+                                           text="ACTIVE TASKS"/>
+
+                                    <Label fx:id="statTasksCount"
+                                           text="0 / 0"/>
+
+                                    <Label fx:id="statSub4"
+                                           text="Completed / Total tasks"/>
+
+                                </VBox>
+
+                            </HBox>
+
+
+                            <!-- QUICK ACTIONS & CUSTOMIZATION (Stage 13 & 18 & 19) -->
+                            <HBox spacing="15"
+                                  alignment="CENTER_LEFT">
+
+                                <Button fx:id="openPreviewButton"
+                                        text="🔍 Preview Selected in New Window"
+                                        onAction="#openProjectPreviewWindow"/>
+
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <Label fx:id="accentThemeLabel"
+                                       text="UI Accent Theme:"/>
+
+                                <ColorPicker fx:id="accentColorPicker"/>
+
+                            </HBox>
+
+
+                            <!-- PORTFOLIO TOOLS -->
+                            <TitledPane text="Portfolio Configuration &amp; Interactive Controls"
                                         expanded="true"
                                         maxWidth="Infinity">
 
                                 <content>
 
-                                    <VBox spacing="12">
+                                    <VBox spacing="14">
 
                                         <padding>
                                             <Insets top="15"
@@ -250,12 +518,16 @@
                                         </HBox>
 
 
+                                        <!-- Stage 12: DatePicker + DateFormatter -->
                                         <HBox spacing="10"
                                               alignment="CENTER_LEFT">
 
                                             <Label text="Project Date:"/>
 
                                             <DatePicker fx:id="projectDatePicker"/>
+
+                                            <Label fx:id="formattedDateLabel"
+                                                   text="No date selected"/>
 
                                         </HBox>
 
@@ -318,6 +590,18 @@
                                                            promptText="Enter PIN"/>
 
                                         </HBox>
+
+
+                                        <!-- Stage 8: Technology Tags (FlowPane) -->
+                                        <VBox spacing="6">
+
+                                            <Label text="Technology Stack Badges (FlowPane):"/>
+
+                                            <FlowPane hgap="8"
+                                                      vgap="8"
+                                                      fx:id="techBadgesPane"/>
+
+                                        </VBox>
 
 
                                         <Label text="Technology Categories"/>
@@ -447,6 +731,10 @@
                                 <Button fx:id="deleteProjectButton"
                                         text="Delete"
                                         onAction="#deleteProject"/>
+
+                                <Button fx:id="previewProjectButton"
+                                        text="Preview in Window"
+                                        onAction="#openProjectPreviewWindow"/>
 
                                 <Region HBox.hgrow="ALWAYS"/>
 

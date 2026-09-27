@@ -56,9 +56,17 @@ import javafx.scene.text.FontWeight;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javafx.scene.control.ColorPicker;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.Scene;
+import javafx.fxml.FXMLLoader;
+import java.time.format.DateTimeFormatter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Optional;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import java.io.File;
 
 
@@ -82,6 +90,9 @@ public class DashboardController {
 
     @FXML
     private Label menuTitle;
+
+    @FXML
+    private Button welcomeButton;
 
     @FXML
     private Button dashboardButton;
@@ -270,6 +281,9 @@ public class DashboardController {
     // =========================================================
 
     @FXML
+    private VBox welcomePage;
+
+    @FXML
     private VBox dashboardPage;
 
     @FXML
@@ -289,6 +303,55 @@ public class DashboardController {
 
     @FXML
     private VBox settingsPage;
+
+    // Welcome Page components
+    @FXML private VBox welcomeHero;
+    @FXML private Label welcomeHeading;
+    @FXML private Label welcomeSubheading;
+    @FXML private Button welcomeDashBtn;
+    @FXML private Button welcomeProjBtn;
+    @FXML private Button welcomeSkillsBtn;
+    @FXML private Button welcomeNotesBtn;
+    @FXML private Button welcomeTasksBtn;
+    @FXML private Label welcomeFeaturesTitle;
+    @FXML private VBox featureCard1;
+    @FXML private VBox featureCard2;
+    @FXML private VBox featureCard3;
+    @FXML private VBox featureCard4;
+    @FXML private Label featureTitle1;
+    @FXML private Label featureTitle2;
+    @FXML private Label featureTitle3;
+    @FXML private Label featureTitle4;
+    @FXML private Label dbStatusBadge;
+    @FXML private Label systemUptimeLabel;
+
+    // Dashboard Page components
+    @FXML private Label dashOverviewTitle;
+    @FXML private Label dashOverviewSubtitle;
+    @FXML private Label liveClockLabel;
+    @FXML private Label systemStatusBadge;
+    @FXML private VBox statCard1;
+    @FXML private VBox statCard2;
+    @FXML private VBox statCard3;
+    @FXML private VBox statCard4;
+    @FXML private Label statLabel1;
+    @FXML private Label statLabel2;
+    @FXML private Label statLabel3;
+    @FXML private Label statLabel4;
+    @FXML private Label statProjectsCount;
+    @FXML private Label statSkillsCount;
+    @FXML private Label statNotesCount;
+    @FXML private Label statTasksCount;
+    @FXML private Label statSub1;
+    @FXML private Label statSub2;
+    @FXML private Label statSub3;
+    @FXML private Label statSub4;
+    @FXML private Button openPreviewButton;
+    @FXML private Button previewProjectButton;
+    @FXML private Label accentThemeLabel;
+    @FXML private ColorPicker accentColorPicker;
+    @FXML private Label formattedDateLabel;
+    @FXML private FlowPane techBadgesPane;
 
 
     // =========================================================
@@ -487,6 +550,11 @@ public class DashboardController {
 
     private void showPage(VBox page) {
 
+        if (welcomePage != null) {
+            welcomePage.setVisible(false);
+            welcomePage.setManaged(false);
+        }
+
         dashboardPage.setVisible(false);
         dashboardPage.setManaged(false);
 
@@ -586,6 +654,7 @@ public class DashboardController {
         // SIDEBAR BUTTONS
         // -----------------------------------------------------
 
+        if (welcomeButton != null) setupButton(welcomeButton);
         setupButton(dashboardButton);
         setupButton(projectsButton);
         setupButton(skillsButton);
@@ -775,7 +844,25 @@ public class DashboardController {
 
         setupResponsiveLayout();
 
-        showPage(dashboardPage);
+        setupWelcomePage();
+
+        setupBeautifulDashboard();
+
+        startLiveClock();
+
+        setupTechBadges();
+
+        setupDatePickerFormatter();
+
+        if (openPreviewButton != null) {
+            setupActionButton(openPreviewButton);
+        }
+
+        if (previewProjectButton != null) {
+            setupActionButton(previewProjectButton);
+        }
+
+        showPage(welcomePage);
     }
 
 
@@ -2223,6 +2310,19 @@ public class DashboardController {
     // =========================================================
 
     @FXML
+    private void showWelcome() {
+
+        showPage(welcomePage);
+
+        pageTitle.setText("Welcome");
+
+        welcome.setText(
+                "Welcome to DevFolio — your personal portfolio manager."
+        );
+    }
+
+
+    @FXML
     private void showDashboard() {
 
         showPage(dashboardPage);
@@ -2232,6 +2332,8 @@ public class DashboardController {
         welcome.setText(
                 "Welcome back! Here's an overview of your portfolio."
         );
+
+        updateDashboardStats();
     }
 
 
@@ -2636,4 +2738,666 @@ public class DashboardController {
             Platform.exit();
         }
     }
-}
+
+
+    // =========================================================
+    // WELCOME PAGE SETUP
+    // =========================================================
+
+    private void setupWelcomePage() {
+
+        if (welcomeHero != null) {
+
+            welcomeHero.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web("#0F172A"),
+                                    new CornerRadii(16),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+
+            welcomeHero.setPadding(
+                    new Insets(40, 40, 40, 40)
+            );
+        }
+
+
+        if (welcomeHeading != null) {
+
+            welcomeHeading.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            42
+                    )
+            );
+
+            welcomeHeading.setTextFill(
+                    Color.web("#38BDF8")
+            );
+        }
+
+
+        if (welcomeSubheading != null) {
+
+            welcomeSubheading.setFont(
+                    Font.font("Arial", 18)
+            );
+
+            welcomeSubheading.setTextFill(
+                    Color.web("#CBD5E1")
+            );
+        }
+
+
+        if (welcomeFeaturesTitle != null) {
+
+            welcomeFeaturesTitle.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            20
+                    )
+            );
+
+            welcomeFeaturesTitle.setTextFill(
+                    Color.WHITE
+            );
+        }
+
+
+        styleFeatureCard(featureCard1, featureTitle1, "📁  Projects");
+        styleFeatureCard(featureCard2, featureTitle2, "🛠  Skills");
+        styleFeatureCard(featureCard3, featureTitle3, "📝  Notes");
+        styleFeatureCard(featureCard4, featureTitle4, "✅  Tasks");
+
+
+        if (dbStatusBadge != null) {
+
+            dbStatusBadge.setText("● Database Connected");
+
+            dbStatusBadge.setTextFill(
+                    Color.web("#4ADE80")
+            );
+
+            dbStatusBadge.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            13
+                    )
+            );
+        }
+
+
+        if (systemUptimeLabel != null) {
+
+            systemUptimeLabel.setTextFill(
+                    Color.web("#94A3B8")
+            );
+
+            systemUptimeLabel.setFont(
+                    Font.font("Arial", 12)
+            );
+        }
+
+
+        styleWelcomeNavBtn(welcomeDashBtn,   "#2563EB");
+        styleWelcomeNavBtn(welcomeProjBtn,   "#7C3AED");
+        styleWelcomeNavBtn(welcomeSkillsBtn, "#0D9488");
+        styleWelcomeNavBtn(welcomeNotesBtn,  "#D97706");
+        styleWelcomeNavBtn(welcomeTasksBtn,  "#DC2626");
+    }
+
+
+    private void styleFeatureCard(
+            VBox card, Label title, String text) {
+
+        if (card == null) return;
+
+        card.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#1E293B"),
+                                new CornerRadii(12),
+                                Insets.EMPTY
+                        )
+                )
+        );
+
+        card.setPadding(
+                new Insets(20, 20, 20, 20)
+        );
+
+        if (title != null) {
+
+            title.setText(text);
+
+            title.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            16
+                    )
+            );
+
+            title.setTextFill(
+                    Color.WHITE
+            );
+        }
+    }
+
+
+    private void styleWelcomeNavBtn(
+            Button button, String colorHex) {
+
+        if (button == null) return;
+
+        button.setPrefWidth(140);
+
+        button.setPrefHeight(44);
+
+        button.setFont(
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        13
+                )
+        );
+
+        button.setTextFill(Color.WHITE);
+
+        button.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web(colorHex),
+                                new CornerRadii(10),
+                                Insets.EMPTY
+                        )
+                )
+        );
+    }
+
+
+    // =========================================================
+    // BEAUTIFUL DASHBOARD SETUP
+    // =========================================================
+
+    private void setupBeautifulDashboard() {
+
+        if (dashOverviewTitle != null) {
+
+            dashOverviewTitle.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            26
+                    )
+            );
+
+            dashOverviewTitle.setTextFill(
+                    Color.WHITE
+            );
+        }
+
+
+        if (dashOverviewSubtitle != null) {
+
+            dashOverviewSubtitle.setFont(
+                    Font.font("Arial", 14)
+            );
+
+            dashOverviewSubtitle.setTextFill(
+                    Color.web("#94A3B8")
+            );
+        }
+
+
+        if (liveClockLabel != null) {
+
+            liveClockLabel.setFont(
+                    Font.font(
+                            "Consolas",
+                            FontWeight.BOLD,
+                            22
+                    )
+            );
+
+            liveClockLabel.setTextFill(
+                    Color.web("#38BDF8")
+            );
+        }
+
+
+        if (systemStatusBadge != null) {
+
+            systemStatusBadge.setText("● System Online");
+
+            systemStatusBadge.setTextFill(
+                    Color.web("#4ADE80")
+            );
+
+            systemStatusBadge.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            13
+                    )
+            );
+        }
+
+
+        styleStatCard(statCard1, statLabel1, statProjectsCount, statSub1,
+                "Projects", "#3B82F6");
+
+        styleStatCard(statCard2, statLabel2, statSkillsCount, statSub2,
+                "Skills", "#8B5CF6");
+
+        styleStatCard(statCard3, statLabel3, statNotesCount, statSub3,
+                "Notes", "#F59E0B");
+
+        styleStatCard(statCard4, statLabel4, statTasksCount, statSub4,
+                "Tasks", "#10B981");
+
+
+        if (accentThemeLabel != null) {
+
+            accentThemeLabel.setTextFill(
+                    Color.web("#CBD5E1")
+            );
+
+            accentThemeLabel.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            14
+                    )
+            );
+        }
+
+
+        if (accentColorPicker != null) {
+
+            accentColorPicker.setValue(
+                    Color.web("#38BDF8")
+            );
+
+            accentColorPicker
+                    .valueProperty()
+                    .addListener(
+                            (obs, oldColor, newColor) -> {
+
+                                if (logo != null) {
+                                    logo.setTextFill(newColor);
+                                }
+
+                                if (liveClockLabel != null) {
+                                    liveClockLabel.setTextFill(newColor);
+                                }
+                            }
+                    );
+        }
+
+
+        if (formattedDateLabel != null) {
+
+            formattedDateLabel.setTextFill(
+                    Color.web("#94A3B8")
+            );
+
+            formattedDateLabel.setFont(
+                    Font.font("Arial", 13)
+            );
+        }
+
+
+        updateDashboardStats();
+    }
+
+
+    private void styleStatCard(
+            VBox card,
+            Label titleLabel,
+            Label countLabel,
+            Label subLabel,
+            String title,
+            String colorHex) {
+
+        if (card == null) return;
+
+        card.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#1E293B"),
+                                new CornerRadii(14),
+                                Insets.EMPTY
+                        )
+                )
+        );
+
+        card.setPadding(
+                new Insets(20, 20, 20, 20)
+        );
+
+        card.setMinWidth(160);
+
+
+        if (titleLabel != null) {
+
+            titleLabel.setText(title);
+
+            titleLabel.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            14
+                    )
+            );
+
+            titleLabel.setTextFill(
+                    Color.web("#94A3B8")
+            );
+        }
+
+
+        if (countLabel != null) {
+
+            countLabel.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            44
+                    )
+            );
+
+            countLabel.setTextFill(
+                    Color.web(colorHex)
+            );
+        }
+
+
+        if (subLabel != null) {
+
+            subLabel.setFont(
+                    Font.font("Arial", 12)
+            );
+
+            subLabel.setTextFill(
+                    Color.web("#475569")
+            );
+        }
+    }
+
+
+    // =========================================================
+    // DASHBOARD STATS
+    // =========================================================
+
+    private void updateDashboardStats() {
+
+        int projects = projectDAO
+                .getAllProjects()
+                .size();
+
+        int skills = skillDAO
+                .getAllSkills()
+                .size();
+
+        int notes = noteDAO
+                .getAllNotes()
+                .size();
+
+        int tasks = taskDAO
+                .getAllTasks()
+                .size();
+
+
+        if (statProjectsCount != null) {
+            statProjectsCount.setText(
+                    String.valueOf(projects)
+            );
+        }
+
+        if (statSkillsCount != null) {
+            statSkillsCount.setText(
+                    String.valueOf(skills)
+            );
+        }
+
+        if (statNotesCount != null) {
+            statNotesCount.setText(
+                    String.valueOf(notes)
+            );
+        }
+
+        if (statTasksCount != null) {
+            statTasksCount.setText(
+                    String.valueOf(tasks)
+            );
+        }
+
+
+        if (statSub1 != null) {
+            statSub1.setText("Total projects added");
+        }
+
+        if (statSub2 != null) {
+            statSub2.setText("Skills recorded");
+        }
+
+        if (statSub3 != null) {
+            statSub3.setText("Notes created");
+        }
+
+        if (statSub4 != null) {
+            statSub4.setText("Tasks tracked");
+        }
+    }
+
+
+    // =========================================================
+    // LIVE CLOCK (Stage 26 — background daemon thread)
+    // =========================================================
+
+    private void startLiveClock() {
+
+        Thread clockThread = new Thread(() -> {
+
+            java.time.format.DateTimeFormatter fmt =
+                    java.time.format.DateTimeFormatter
+                            .ofPattern("HH:mm:ss  |  EEE, MMM d yyyy");
+
+            while (!Thread.currentThread().isInterrupted()) {
+
+                String time = java.time.LocalDateTime
+                        .now()
+                        .format(fmt);
+
+                Platform.runLater(() -> {
+
+                    if (liveClockLabel != null) {
+                        liveClockLabel.setText(time);
+                    }
+                });
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+
+        clockThread.setDaemon(true);
+
+        clockThread.setName("LiveClock");
+
+        clockThread.start();
+    }
+
+
+    // =========================================================
+    // TECH BADGES (Stage 8 — FlowPane)
+    // =========================================================
+
+    private void setupTechBadges() {
+
+        if (techBadgesPane == null) return;
+
+        String[] techs = {
+            "Java", "JavaFX", "SQLite", "Maven",
+            "Git", "C++", "Python", "HTML/CSS",
+            "Arduino", "FPGA", "SQL"
+        };
+
+        String[] colors = {
+            "#3B82F6", "#8B5CF6", "#F59E0B", "#10B981",
+            "#EC4899", "#EF4444", "#06B6D4", "#F97316",
+            "#84CC16", "#A78BFA", "#67E8F9"
+        };
+
+        techBadgesPane.getChildren().clear();
+
+        techBadgesPane.setHgap(8);
+
+        techBadgesPane.setVgap(8);
+
+        for (int i = 0; i < techs.length; i++) {
+
+            Label badge = new Label(techs[i]);
+
+            final String color = colors[i % colors.length];
+
+            badge.setFont(
+                    Font.font(
+                            "Arial",
+                            FontWeight.BOLD,
+                            12
+                    )
+            );
+
+            badge.setTextFill(Color.WHITE);
+
+            badge.setPadding(
+                    new Insets(6, 14, 6, 14)
+            );
+
+            badge.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web(color),
+                                    new CornerRadii(20),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+
+            techBadgesPane.getChildren().add(badge);
+        }
+    }
+
+
+    // =========================================================
+    // DATE PICKER FORMATTER (Stage 12)
+    // =========================================================
+
+    private void setupDatePickerFormatter() {
+
+        if (projectDatePicker == null
+                || formattedDateLabel == null) return;
+
+        projectDatePicker
+                .valueProperty()
+                .addListener(
+                        (obs, oldDate, newDate) -> {
+
+                            if (newDate != null) {
+
+                                java.time.format.DateTimeFormatter fmt =
+                                        java.time.format.DateTimeFormatter
+                                                .ofPattern("MMMM d, yyyy");
+
+                                formattedDateLabel.setText(
+                                        "Selected: "
+                                                + newDate.format(fmt)
+                                );
+
+                            } else {
+
+                                formattedDateLabel.setText("");
+                            }
+                        }
+                );
+    }
+
+
+    // =========================================================
+    // OPEN PROJECT IN NEW WINDOW (Stages 18 & 19)
+    // =========================================================
+
+    @FXML
+    private void openProjectPreviewWindow() {
+
+        Project selected = projectTable
+                .getSelectionModel()
+                .getSelectedItem();
+
+        if (selected == null) {
+
+            showError("Please select a project to preview.");
+
+            return;
+        }
+
+        try {
+
+            java.net.URL fxmlUrl =
+                    getClass().getResource("preview.fxml");
+
+            if (fxmlUrl == null) {
+
+                showError("preview.fxml not found.");
+
+                return;
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(fxmlUrl);
+
+            javafx.scene.Parent root =
+                    loader.load();
+
+            PreviewController controller =
+                    loader.getController();
+
+            controller.initData(
+                    selected.getTitle(),
+                    selected.getTechnology(),
+                    selected.getDescription(),
+                    selected.getGithubLink()
+            );
+
+            Stage previewStage = new Stage();
+
+            previewStage.setTitle(
+                    "Project Preview — "
+                            + selected.getTitle()
+            );
+
+            previewStage.setScene(
+                    new Scene(root, 500, 420)
+            );
+
+            previewStage.show();
+
+        } catch (Exception e) {
+
+            showError(
+                    "Could not open preview: "
+                            + e.getMessage()
+            );
+        }
+    }
+}

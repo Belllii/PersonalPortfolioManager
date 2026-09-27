@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="rootContainer"
+      spacing="15"
+      prefWidth="500"
+      prefHeight="420"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.portfolio.PreviewController">
+
+    <padding>
+        <Insets top="25" right="25" bottom="25" left="25"/>
+    </padding>
+
+    <Label fx:id="previewHeading"
+           text="Project Summary Preview"/>
+
+    <Separator/>
+
+    <VBox spacing="12" VBox.vgrow="ALWAYS">
+        <Label fx:id="titleLabel"
+               wrapText="true"/>
+
+        <Label fx:id="techLabel"
+               wrapText="true"/>
+
+        <Label fx:id="descLabel"
+               wrapText="true"/>
+
+        <Label fx:id="githubLabel"
+               wrapText="true"/>
+    </VBox>
+
+    <Separator/>
+
+    <HBox alignment="CENTER_RIGHT">
+        <Button fx:id="closeButton"
+                text="Close Preview"
+                onAction="#closeWindow"
+                prefWidth="130"
+                prefHeight="36"/>
+    </HBox>
+
+</VBox>
