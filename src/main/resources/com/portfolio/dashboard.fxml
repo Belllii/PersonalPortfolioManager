@@ -4,6 +4,7 @@
         <?import javafx.scene.control.*?>
         <?import javafx.scene.image.ImageView?>
         <?import javafx.scene.layout.*?>
+        <?import javafx.scene.chart.*?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -91,15 +92,17 @@
 
     <center>
 
-        <ScrollPane fitToWidth="true"
-                    fitToHeight="false"
+        <ScrollPane fx:id="mainScrollPane"
+                    fitToWidth="true"
+                    fitToHeight="true"
                     hbarPolicy="NEVER"
                     vbarPolicy="AS_NEEDED">
 
             <content>
 
                 <VBox fx:id="content"
-                      spacing="15">
+                      spacing="15"
+                      maxWidth="Infinity">
 
                     <padding>
                         <Insets top="20"
@@ -194,6 +197,29 @@
 
                         </VBox>
 
+                        <!-- PAGE NAVIGATION & THEME CONTROLS -->
+                        <HBox spacing="8"
+                              alignment="CENTER_RIGHT">
+
+                            <Button fx:id="themeToggleButton"
+                                    text="☀️ Light"
+                                    onAction="#toggleTheme"/>
+
+                            <Separator orientation="VERTICAL"/>
+
+                            <Button fx:id="prevPageButton"
+                                    text="◀ Prev"
+                                    onAction="#showPreviousPage"/>
+
+                            <Label fx:id="pageIndicatorLabel"
+                                   text="1 / 8 : Welcome"/>
+
+                            <Button fx:id="nextPageButton"
+                                    text="Next ▶"
+                                    onAction="#showNextPage"/>
+
+                        </HBox>
+
                     </HBox>
 
 
@@ -205,7 +231,8 @@
                     <!-- ================================================= -->
 
                     <StackPane fx:id="pageContainer"
-                               maxWidth="Infinity">
+                               maxWidth="Infinity"
+                               VBox.vgrow="ALWAYS">
 
 
                         <!-- ================================================= -->
@@ -214,7 +241,8 @@
 
                         <VBox fx:id="welcomePage"
                               spacing="20"
-                              maxWidth="Infinity">
+                              maxWidth="Infinity"
+                              VBox.vgrow="ALWAYS">
 
                             <!-- HERO BANNER -->
                             <VBox fx:id="welcomeHero"
@@ -746,8 +774,23 @@
                             <Separator/>
 
 
-                            <Label fx:id="myProjectsLabel"
-                                   text="My Projects"/>
+                            <HBox spacing="15"
+                                  alignment="CENTER_LEFT">
+
+                                <Label fx:id="myProjectsLabel"
+                                       text="My Projects"/>
+
+                                <Region HBox.hgrow="ALWAYS"/>
+
+                                <TextField fx:id="projectSearchField"
+                                           promptText="🔍 Search projects by title, tech, or description..."
+                                           prefWidth="360"/>
+
+                                <Button fx:id="clearSearchButton"
+                                        text="Clear"
+                                        onAction="#clearProjectSearch"/>
+
+                            </HBox>
 
 
                             <TableView fx:id="projectTable"
@@ -913,13 +956,34 @@
                             <Separator/>
 
 
-                            <!-- SKILL LIST -->
+                            <!-- SKILL LIST & VISUALIZATION (PieChart) -->
+                            <HBox spacing="15"
+                                  maxWidth="Infinity">
 
-                            <Label text="All Skills"/>
+                                <VBox spacing="8"
+                                      prefWidth="380">
 
-                            <ListView fx:id="skillListView"
-                                      prefHeight="180"
-                                      maxWidth="Infinity"/>
+                                    <Label text="All Skills"/>
+
+                                    <ListView fx:id="skillListView"
+                                              prefHeight="240"
+                                              VBox.vgrow="ALWAYS"/>
+
+                                </VBox>
+
+                                <VBox spacing="8"
+                                      HBox.hgrow="ALWAYS">
+
+                                    <Label text="Skills Category Visualization (PieChart)"/>
+
+                                    <PieChart fx:id="skillsPieChart"
+                                              prefHeight="240"
+                                              legendVisible="true"
+                                              labelsVisible="true"/>
+
+                                </VBox>
+
+                            </HBox>
 
 
                             <Separator/>
@@ -1070,9 +1134,19 @@
                                 <!-- TASK LIST -->
 
                                 <VBox spacing="10"
-                                      prefWidth="300">
+                                      prefWidth="320">
 
                                     <Label text="My Tasks"/>
+
+                                    <HBox spacing="8"
+                                          alignment="CENTER_LEFT">
+
+                                        <Label text="Priority Filter:"/>
+
+                                        <ChoiceBox fx:id="taskPriorityFilterChoice"
+                                                   prefWidth="160"/>
+
+                                    </HBox>
 
                                     <ListView fx:id="taskListView"
                                               prefHeight="350"
@@ -1093,8 +1167,20 @@
                                                maxWidth="Infinity"/>
 
 
-                                    <CheckBox fx:id="taskCompletedCheckBox"
-                                              text="Completed"/>
+                                    <HBox spacing="15"
+                                          alignment="CENTER_LEFT">
+
+                                        <Label text="Priority:"/>
+
+                                        <ChoiceBox fx:id="taskPriorityChoice"
+                                                   prefWidth="140"/>
+
+                                        <Region HBox.hgrow="ALWAYS"/>
+
+                                        <CheckBox fx:id="taskCompletedCheckBox"
+                                                  text="Completed"/>
+
+                                    </HBox>
 
 
                                     <HBox spacing="10">

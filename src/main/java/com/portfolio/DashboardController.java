@@ -68,6 +68,11 @@ import java.util.Optional;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.chart.PieChart;
+import javafx.collections.transformation.FilteredList;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 
 public class DashboardController {
@@ -81,6 +86,9 @@ public class DashboardController {
 
     @FXML
     private VBox content;
+
+    @FXML
+    private ScrollPane mainScrollPane;
 
     @FXML
     private StackPane pageContainer;
@@ -195,6 +203,14 @@ public class DashboardController {
 
     @FXML
     private Label myProjectsLabel;
+
+    @FXML
+    private TextField projectSearchField;
+
+    @FXML
+    private Button clearSearchButton;
+
+    private FilteredList<Project> filteredProjects;
 
     @FXML
     private TableView<Project> projectTable;
@@ -353,6 +369,16 @@ public class DashboardController {
     @FXML private Label formattedDateLabel;
     @FXML private FlowPane techBadgesPane;
 
+    // Pagination / Next-Previous Page Navigation
+    @FXML private Button prevPageButton;
+    @FXML private Button nextPageButton;
+    @FXML private Label pageIndicatorLabel;
+    @FXML private Button themeToggleButton;
+
+    private int currentPageIndex = 0;
+    private static final int TOTAL_PAGES = 8;
+    private boolean isDarkMode = true;
+
 
     // =========================================================
     // DATABASE
@@ -402,6 +428,9 @@ public class DashboardController {
     @FXML
     private Label skillMessage;
 
+    @FXML
+    private PieChart skillsPieChart;
+
     private final ObservableList<Skill> skillList =
             FXCollections.observableArrayList();
 
@@ -450,6 +479,14 @@ public class DashboardController {
 
     @FXML
     private CheckBox taskCompletedCheckBox;
+
+    @FXML
+    private ChoiceBox<String> taskPriorityChoice;
+
+    @FXML
+    private ChoiceBox<String> taskPriorityFilterChoice;
+
+    private FilteredList<TaskItem> filteredTasks;
 
     @FXML
     private ListView<TaskItem> taskListView;
@@ -611,6 +648,18 @@ public class DashboardController {
                         )
                 )
         );
+
+        if (mainScrollPane != null) {
+            mainScrollPane.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web("#0F172A"),
+                                    CornerRadii.EMPTY,
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+        }
 
         setupReadableText(content);
         setupReadableText(sidebar);
@@ -793,11 +842,13 @@ public class DashboardController {
                 new PropertyValueFactory<>("githubLink")
         );
 
-        projectTable.setItems(
-                projectList
-        );
+        filteredProjects = new FilteredList<>(projectList, p -> true);
+
+        projectTable.setItems(filteredProjects);
 
         loadProjects();
+
+        setupProjectSearch();
 
 
         // -----------------------------------------------------
@@ -862,7 +913,9 @@ public class DashboardController {
             setupActionButton(previewProjectButton);
         }
 
-        showPage(welcomePage);
+        setupPageNavigationControls();
+
+        showWelcome();
     }
 
 
@@ -1389,6 +1442,8 @@ public class DashboardController {
 
             skillList.addAll(skills);
 
+            updateSkillsPieChart();
+
             skillListView.refresh();
 
             System.out.println(
@@ -1847,9 +1902,39 @@ public class DashboardController {
 
     private void setupTasks() {
 
-        taskListView.setItems(
-                taskList
-        );
+        // Priority choices
+        ObservableList<String> priorities =
+                FXCollections.observableArrayList(
+                        "High", "Medium", "Low"
+                );
+
+        if (taskPriorityChoice != null) {
+            taskPriorityChoice.setItems(priorities);
+            taskPriorityChoice.setValue("Medium");
+        }
+
+        if (taskPriorityFilterChoice != null) {
+            taskPriorityFilterChoice.setItems(
+                    FXCollections.observableArrayList(
+                            "All", "High", "Medium", "Low"
+                    )
+            );
+            taskPriorityFilterChoice.setValue("All");
+            taskPriorityFilterChoice.valueProperty().addListener(
+                    (obs, oldVal, newVal) -> {
+                        if (filteredTasks != null) {
+                            filteredTasks.setPredicate(t -> {
+                                if (newVal == null || newVal.equals("All")) return true;
+                                return t.getPriority().equals(newVal);
+                            });
+                        }
+                    }
+            );
+        }
+
+        filteredTasks = new FilteredList<>(taskList, t -> true);
+
+        taskListView.setItems(filteredTasks);
 
         loadTasks();
 
@@ -1877,6 +1962,12 @@ public class DashboardController {
                                                 selectedTask
                                                         .isCompleted()
                                         );
+
+                                if (taskPriorityChoice != null) {
+                                    taskPriorityChoice.setValue(
+                                            selectedTask.getPriority()
+                                    );
+                                }
                             }
                         }
                 );
@@ -1912,11 +2003,17 @@ public class DashboardController {
         }
 
 
+        String priority =
+                taskPriorityChoice != null
+                        ? taskPriorityChoice.getValue()
+                        : "Medium";
+
         TaskItem task =
                 new TaskItem(
                         title,
                         taskCompletedCheckBox
-                                .isSelected()
+                                .isSelected(),
+                        priority
                 );
 
 
@@ -1967,11 +2064,17 @@ public class DashboardController {
         }
 
 
+        String priority =
+                taskPriorityChoice != null
+                        ? taskPriorityChoice.getValue()
+                        : selectedTask.getPriority();
+
         TaskItem updatedTask =
                 new TaskItem(
                         title,
                         taskCompletedCheckBox
-                                .isSelected()
+                                .isSelected(),
+                        priority
                 );
 
 
@@ -2051,7 +2154,8 @@ public class DashboardController {
         TaskItem updatedTask =
                 new TaskItem(
                         selectedTask.getTitle(),
-                        newStatus
+                        newStatus,
+                        selectedTask.getPriority()
                 );
 
 
@@ -2319,6 +2423,8 @@ public class DashboardController {
         welcome.setText(
                 "Welcome to DevFolio — your personal portfolio manager."
         );
+
+        updatePageIndicator(0);
     }
 
 
@@ -2334,6 +2440,8 @@ public class DashboardController {
         );
 
         updateDashboardStats();
+
+        updatePageIndicator(1);
     }
 
 
@@ -2347,6 +2455,8 @@ public class DashboardController {
         welcome.setText(
                 "Add, update and manage your portfolio projects."
         );
+
+        updatePageIndicator(2);
     }
 
 
@@ -2362,6 +2472,8 @@ public class DashboardController {
         );
 
         loadSkills();
+
+        updatePageIndicator(3);
     }
 
 
@@ -2375,6 +2487,8 @@ public class DashboardController {
         welcome.setText(
                 "Create and manage your portfolio notes."
         );
+
+        updatePageIndicator(4);
     }
 
 
@@ -2388,6 +2502,8 @@ public class DashboardController {
         welcome.setText(
                 "Track your portfolio tasks and progress."
         );
+
+        updatePageIndicator(5);
     }
 
 
@@ -2401,6 +2517,8 @@ public class DashboardController {
         welcome.setText(
                 "Fetch and process data from an external API."
         );
+
+        updatePageIndicator(6);
     }
 
 
@@ -2414,6 +2532,129 @@ public class DashboardController {
         welcome.setText(
                 "Manage application settings."
         );
+
+        updatePageIndicator(7);
+    }
+
+
+    // =========================================================
+    // PAGE NAVIGATION CONTROLS (Next / Previous)
+    // =========================================================
+
+    @FXML
+    private void showPreviousPage() {
+        if (currentPageIndex > 0) {
+            navigateToPageIndex(currentPageIndex - 1);
+        }
+    }
+
+
+    @FXML
+    private void showNextPage() {
+        if (currentPageIndex < TOTAL_PAGES - 1) {
+            navigateToPageIndex(currentPageIndex + 1);
+        }
+    }
+
+
+    private void navigateToPageIndex(int index) {
+        switch (index) {
+            case 0 -> showWelcome();
+            case 1 -> showDashboard();
+            case 2 -> showProjects();
+            case 3 -> showSkills();
+            case 4 -> showNotes();
+            case 5 -> showTasks();
+            case 6 -> showApi();
+            case 7 -> showSettings();
+        }
+    }
+
+
+    private void updatePageIndicator(int index) {
+        this.currentPageIndex = index;
+        if (pageIndicatorLabel != null) {
+            String[] pageNames = {
+                "Welcome", "Dashboard", "Projects", "Skills",
+                "Notes", "Tasks", "API", "Settings"
+            };
+            if (index >= 0 && index < pageNames.length) {
+                pageIndicatorLabel.setText((index + 1) + " / " + TOTAL_PAGES + " : " + pageNames[index]);
+            }
+        }
+        if (prevPageButton != null) {
+            prevPageButton.setDisable(index <= 0);
+        }
+        if (nextPageButton != null) {
+            nextPageButton.setDisable(index >= TOTAL_PAGES - 1);
+        }
+    }
+
+
+    private void setupPageNavigationControls() {
+        setupNavControlButton(prevPageButton);
+        setupNavControlButton(nextPageButton);
+
+        if (pageIndicatorLabel != null) {
+            pageIndicatorLabel.setFont(
+                    Font.font("Arial", FontWeight.BOLD, 12)
+            );
+            pageIndicatorLabel.setTextFill(Color.web("#94A3B8"));
+            pageIndicatorLabel.setPadding(new Insets(0, 6, 0, 6));
+        }
+
+        updatePageIndicator(0);
+    }
+
+
+    private void setupNavControlButton(Button button) {
+        if (button == null) return;
+
+        button.setPrefHeight(32);
+        button.setPadding(new Insets(6, 14, 6, 14));
+        button.setFont(
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        12
+                )
+        );
+        button.setTextFill(Color.WHITE);
+        button.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#1E293B"),
+                                new CornerRadii(6),
+                                Insets.EMPTY
+                        )
+                )
+        );
+
+        button.setOnMouseEntered(e -> {
+            if (!button.isDisabled()) {
+                button.setBackground(
+                        new Background(
+                                new BackgroundFill(
+                                        Color.web("#334155"),
+                                        new CornerRadii(6),
+                                        Insets.EMPTY
+                                )
+                        )
+                );
+            }
+        });
+
+        button.setOnMouseExited(e -> {
+            button.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web("#1E293B"),
+                                    new CornerRadii(6),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+        });
     }
 
 
@@ -3400,4 +3641,145 @@ public class DashboardController {
             );
         }
     }
-}
+
+
+    // =========================================================
+    // PROJECT SEARCH / FILTER
+    // =========================================================
+
+    private void setupProjectSearch() {
+
+        if (projectSearchField == null) return;
+
+        setupTextField(projectSearchField);
+
+        if (clearSearchButton != null) {
+            setupActionButton(clearSearchButton);
+        }
+
+        projectSearchField.textProperty().addListener(
+                (obs, oldVal, newVal) -> {
+
+                    String lower = newVal.toLowerCase().trim();
+
+                    filteredProjects.setPredicate(p -> {
+
+                        if (lower.isEmpty()) return true;
+
+                        return p.getTitle().toLowerCase().contains(lower)
+                                || p.getTechnology().toLowerCase().contains(lower)
+                                || p.getDescription().toLowerCase().contains(lower);
+                    });
+                }
+        );
+    }
+
+    @FXML
+    private void clearProjectSearch() {
+
+        if (projectSearchField != null) {
+            projectSearchField.clear();
+        }
+    }
+
+
+    // =========================================================
+    // SKILLS PIE CHART
+    // =========================================================
+
+    private void updateSkillsPieChart() {
+
+        if (skillsPieChart == null) return;
+
+        if (skillList.isEmpty()) {
+            skillsPieChart.getData().clear();
+            return;
+        }
+
+        Map<String, Integer> categoryCount = new LinkedHashMap<>();
+
+        for (Skill s : skillList) {
+
+            String cat = s.getCategory() == null || s.getCategory().isBlank()
+                    ? "Uncategorized"
+                    : s.getCategory();
+
+            categoryCount.merge(cat, 1, Integer::sum);
+        }
+
+        ObservableList<PieChart.Data> chartData =
+                FXCollections.observableArrayList();
+
+        for (Map.Entry<String, Integer> entry : categoryCount.entrySet()) {
+            chartData.add(
+                    new PieChart.Data(
+                            entry.getKey() + " (" + entry.getValue() + ")",
+                            entry.getValue()
+                    )
+            );
+        }
+
+        skillsPieChart.setData(chartData);
+
+        skillsPieChart.setTitle("Skills by Category");
+
+        skillsPieChart.setLabelsVisible(true);
+    }
+
+
+    // =========================================================
+    // DARK / LIGHT THEME TOGGLE
+    // =========================================================
+
+    @FXML
+    private void toggleTheme() {
+
+        isDarkMode = !isDarkMode;
+
+        String bgSidebar = isDarkMode ? "#020617" : "#1E293B";
+        String bgContent  = isDarkMode ? "#0F172A" : "#F1F5F9";
+
+        if (sidebar != null) {
+            sidebar.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web(bgSidebar),
+                                    CornerRadii.EMPTY,
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+        }
+
+        if (content != null) {
+            content.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web(bgContent),
+                                    CornerRadii.EMPTY,
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+        }
+
+        if (mainScrollPane != null) {
+            mainScrollPane.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web(bgContent),
+                                    CornerRadii.EMPTY,
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+        }
+
+        if (themeToggleButton != null) {
+            themeToggleButton.setText(
+                    isDarkMode ? "☀️ Light" : "🌙 Dark"
+            );
+        }
+    }
+}
+

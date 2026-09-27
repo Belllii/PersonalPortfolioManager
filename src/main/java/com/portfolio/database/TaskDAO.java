@@ -12,8 +12,8 @@ public class TaskDAO {
 
         String sql = """
                 INSERT INTO tasks
-                (title, completed)
-                VALUES (?, ?)
+                (title, completed, priority)
+                VALUES (?, ?, ?)
                 """;
 
         try (Connection connection = Database.connect();
@@ -25,6 +25,7 @@ public class TaskDAO {
                     2,
                     task.isCompleted() ? 1 : 0
             );
+            statement.setString(3, task.getPriority());
 
             statement.executeUpdate();
 
@@ -47,9 +48,19 @@ public class TaskDAO {
 
             while (resultSet.next()) {
 
+                String priority = "Medium";
+                try {
+                    String p = resultSet.getString("priority");
+                    if (p != null && !p.isBlank()) {
+                        priority = p;
+                    }
+                } catch (SQLException ignored) {
+                }
+
                 TaskItem task = new TaskItem(
                         resultSet.getString("title"),
-                        resultSet.getInt("completed") == 1
+                        resultSet.getInt("completed") == 1,
+                        priority
                 );
 
                 task.setId(
@@ -73,7 +84,8 @@ public class TaskDAO {
         String sql = """
                 UPDATE tasks
                 SET title = ?,
-                    completed = ?
+                    completed = ?,
+                    priority = ?
                 WHERE id = ?
                 """;
 
@@ -88,7 +100,9 @@ public class TaskDAO {
                     task.isCompleted() ? 1 : 0
             );
 
-            statement.setInt(3, id);
+            statement.setString(3, task.getPriority());
+
+            statement.setInt(4, id);
 
             statement.executeUpdate();
 

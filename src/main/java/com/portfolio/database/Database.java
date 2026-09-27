@@ -71,7 +71,8 @@ public class Database {
         CREATE TABLE IF NOT EXISTS tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT NOT NULL,
-            completed INTEGER NOT NULL DEFAULT 0
+            completed INTEGER NOT NULL DEFAULT 0,
+            priority TEXT NOT NULL DEFAULT 'Medium'
         )
         """;
 
@@ -86,6 +87,12 @@ public class Database {
 
             try {
                 statement.execute("ALTER TABLE skills ADD COLUMN category TEXT NOT NULL DEFAULT ''");
+            } catch (SQLException ignored) {
+                // Column already exists
+            }
+
+            try {
+                statement.execute("ALTER TABLE tasks ADD COLUMN priority TEXT NOT NULL DEFAULT 'Medium'");
             } catch (SQLException ignored) {
                 // Column already exists
             }
