@@ -6,18 +6,21 @@
         <?import javafx.scene.layout.*?>
         <?import javafx.scene.chart.*?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21"
+<BorderPane fx:id="rootBorderPane"
+            xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.portfolio.DashboardController">
 
     <!-- ===================================================== -->
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (Collapsible Drawer - Not Always Visible) -->
     <!-- ===================================================== -->
 
     <left>
         <VBox fx:id="sidebar"
               spacing="10"
-              prefWidth="210">
+              prefWidth="210"
+              visible="false"
+              managed="false">
 
             <padding>
                 <Insets top="25"
@@ -26,15 +29,21 @@
                         left="15"/>
             </padding>
 
-            <VBox spacing="5">
+            <HBox alignment="CENTER_LEFT" spacing="8">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
 
-                <Label fx:id="logo"
-                       text="DevFolio"/>
+                    <Label fx:id="logo"
+                           text="DevFolio"/>
 
-                <Label fx:id="menuTitle"
-                       text="Personal Portfolio Manager"/>
+                    <Label fx:id="menuTitle"
+                           text="Personal Portfolio Manager"/>
 
-            </VBox>
+                </VBox>
+
+                <Button fx:id="closeSidebarButton"
+                        text="✕"
+                        onAction="#toggleSidebar"/>
+            </HBox>
 
             <Button fx:id="welcomeButton"
                     text="Welcome"
@@ -136,6 +145,11 @@
 
                         <Menu text="View">
 
+                            <MenuItem text="Toggle Sidebar Menu"
+                                      onAction="#toggleSidebar"/>
+
+                            <SeparatorMenuItem/>
+
                             <MenuItem text="Welcome"
                                       onAction="#showWelcome"/>
 
@@ -174,10 +188,78 @@
 
 
                     <!-- ================================================= -->
-                    <!-- COMMON HEADER -->
+                    <!-- WEBSITE TOP NAVIGATION BAR -->
                     <!-- ================================================= -->
 
-                    <HBox spacing="15"
+                    <HBox fx:id="topNavBar"
+                          spacing="8"
+                          alignment="CENTER_LEFT">
+
+                        <Button fx:id="sidebarToggleButton"
+                                text="☰ Menu"
+                                onAction="#toggleSidebar"/>
+
+                        <Separator orientation="VERTICAL"/>
+
+                        <Button fx:id="topWelcomeBtn"
+                                text="Home"
+                                onAction="#showWelcome"/>
+
+                        <Button fx:id="topDashboardBtn"
+                                text="Dashboard"
+                                onAction="#showDashboard"/>
+
+                        <Button fx:id="topProjectsBtn"
+                                text="Projects"
+                                onAction="#showProjects"/>
+
+                        <Button fx:id="topSkillsBtn"
+                                text="Skills"
+                                onAction="#showSkills"/>
+
+                        <Button fx:id="topNotesBtn"
+                                text="Notes"
+                                onAction="#showNotes"/>
+
+                        <Button fx:id="topTasksBtn"
+                                text="Tasks"
+                                onAction="#showTasks"/>
+
+                        <Button fx:id="topApiBtn"
+                                text="API"
+                                onAction="#showApi"/>
+
+                        <Button fx:id="topSettingsBtn"
+                                text="Settings"
+                                onAction="#showSettings"/>
+
+                        <Region HBox.hgrow="ALWAYS"/>
+
+                        <HBox spacing="8"
+                              alignment="CENTER_RIGHT">
+
+                            <Button fx:id="prevPageButton"
+                                    text="◀ Prev"
+                                    onAction="#showPreviousPage"/>
+
+                            <Label fx:id="pageIndicatorLabel"
+                                   text="1 / 8 : Welcome"/>
+
+                            <Button fx:id="nextPageButton"
+                                    text="Next ▶"
+                                    onAction="#showNextPage"/>
+
+                        </HBox>
+
+                    </HBox>
+
+
+                    <!-- ================================================= -->
+                    <!-- PAGE BANNER HEADER -->
+                    <!-- ================================================= -->
+
+                    <HBox fx:id="pageHeaderBox"
+                          spacing="15"
                           alignment="CENTER_LEFT">
 
                         <ImageView fx:id="profileImage"
@@ -196,29 +278,6 @@
                                    wrapText="true"/>
 
                         </VBox>
-
-                        <!-- PAGE NAVIGATION & THEME CONTROLS -->
-                        <HBox spacing="8"
-                              alignment="CENTER_RIGHT">
-
-                            <Button fx:id="themeToggleButton"
-                                    text="☀️ Light"
-                                    onAction="#toggleTheme"/>
-
-                            <Separator orientation="VERTICAL"/>
-
-                            <Button fx:id="prevPageButton"
-                                    text="◀ Prev"
-                                    onAction="#showPreviousPage"/>
-
-                            <Label fx:id="pageIndicatorLabel"
-                                   text="1 / 8 : Welcome"/>
-
-                            <Button fx:id="nextPageButton"
-                                    text="Next ▶"
-                                    onAction="#showNextPage"/>
-
-                        </HBox>
 
                     </HBox>
 
@@ -488,20 +547,13 @@
                             </HBox>
 
 
-                            <!-- QUICK ACTIONS & CUSTOMIZATION (Stage 13 & 18 & 19) -->
+                            <!-- QUICK ACTIONS (Stage 18 & 19) -->
                             <HBox spacing="15"
                                   alignment="CENTER_LEFT">
 
                                 <Button fx:id="openPreviewButton"
                                         text="🔍 Preview Selected in New Window"
                                         onAction="#openProjectPreviewWindow"/>
-
-                                <Region HBox.hgrow="ALWAYS"/>
-
-                                <Label fx:id="accentThemeLabel"
-                                       text="UI Accent Theme:"/>
-
-                                <ColorPicker fx:id="accentColorPicker"/>
 
                             </HBox>
 

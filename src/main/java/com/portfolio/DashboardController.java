@@ -56,11 +56,14 @@ import javafx.scene.text.FontWeight;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javafx.scene.control.ColorPicker;
+import javafx.animation.FadeTransition;
+import javafx.scene.Cursor;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
+import javafx.util.Duration;
 import java.time.format.DateTimeFormatter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -78,11 +81,50 @@ import java.util.LinkedHashMap;
 public class DashboardController {
 
     // =========================================================
-    // SIDEBAR
+    // ROOT, SIDEBAR & TOP NAVBAR
     // =========================================================
 
     @FXML
+    private BorderPane rootBorderPane;
+
+    @FXML
     private VBox sidebar;
+
+    @FXML
+    private Button sidebarToggleButton;
+
+    @FXML
+    private Button closeSidebarButton;
+
+    @FXML
+    private HBox topNavBar;
+
+    @FXML
+    private HBox pageHeaderBox;
+
+    @FXML
+    private Button topWelcomeBtn;
+
+    @FXML
+    private Button topDashboardBtn;
+
+    @FXML
+    private Button topProjectsBtn;
+
+    @FXML
+    private Button topSkillsBtn;
+
+    @FXML
+    private Button topNotesBtn;
+
+    @FXML
+    private Button topTasksBtn;
+
+    @FXML
+    private Button topApiBtn;
+
+    @FXML
+    private Button topSettingsBtn;
 
     @FXML
     private VBox content;
@@ -364,8 +406,6 @@ public class DashboardController {
     @FXML private Label statSub4;
     @FXML private Button openPreviewButton;
     @FXML private Button previewProjectButton;
-    @FXML private Label accentThemeLabel;
-    @FXML private ColorPicker accentColorPicker;
     @FXML private Label formattedDateLabel;
     @FXML private FlowPane techBadgesPane;
 
@@ -373,11 +413,10 @@ public class DashboardController {
     @FXML private Button prevPageButton;
     @FXML private Button nextPageButton;
     @FXML private Label pageIndicatorLabel;
-    @FXML private Button themeToggleButton;
 
     private int currentPageIndex = 0;
     private static final int TOTAL_PAGES = 8;
-    private boolean isDarkMode = true;
+    private boolean isSidebarOpen = false;
 
 
     // =========================================================
@@ -582,8 +621,30 @@ public class DashboardController {
 
 
     // =========================================================
-    // PAGE VISIBILITY
+    // PAGE VISIBILITY & SIDEBAR DRAWER
     // =========================================================
+
+    @FXML
+    private void toggleSidebar() {
+        setSidebarOpen(!isSidebarOpen);
+    }
+
+    private void setSidebarOpen(boolean open) {
+        this.isSidebarOpen = open;
+
+        if (sidebar != null) {
+            sidebar.setVisible(open);
+            sidebar.setManaged(open);
+        }
+
+        if (rootBorderPane != null) {
+            rootBorderPane.setLeft(open ? sidebar : null);
+        }
+
+        if (sidebarToggleButton != null) {
+            sidebarToggleButton.setText(open ? "✕ Close Menu" : "☰ Menu");
+        }
+    }
 
     private void showPage(VBox page) {
 
@@ -615,6 +676,24 @@ public class DashboardController {
 
         page.setVisible(true);
         page.setManaged(true);
+
+        if (pageHeaderBox != null) {
+            boolean showBanner = (page != welcomePage);
+            pageHeaderBox.setVisible(showBanner);
+            pageHeaderBox.setManaged(showBanner);
+        }
+
+        // Automatically close the sidebar drawer on page change so it doesn't stay stuck on screen
+        setSidebarOpen(false);
+
+        if (mainScrollPane != null) {
+            mainScrollPane.setVvalue(0.0);
+        }
+
+        FadeTransition fade = new FadeTransition(Duration.millis(180), page);
+        fade.setFromValue(0.25);
+        fade.setToValue(1.0);
+        fade.play();
     }
 
 
@@ -661,6 +740,19 @@ public class DashboardController {
             );
         }
 
+        if (topNavBar != null) {
+            topNavBar.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web("#020617"),
+                                    new CornerRadii(10),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+            topNavBar.setPadding(new Insets(10, 14, 10, 14));
+        }
+
         setupReadableText(content);
         setupReadableText(sidebar);
 
@@ -700,7 +792,7 @@ public class DashboardController {
 
 
         // -----------------------------------------------------
-        // SIDEBAR BUTTONS
+        // SIDEBAR & TOP NAVBAR BUTTONS
         // -----------------------------------------------------
 
         if (welcomeButton != null) setupButton(welcomeButton);
@@ -711,6 +803,19 @@ public class DashboardController {
         setupButton(tasksButton);
         setupButton(apiButton);
         setupButton(settingsButton);
+
+        setupNavControlButton(sidebarToggleButton);
+        setupNavControlButton(closeSidebarButton);
+        setupTopNavButton(topWelcomeBtn);
+        setupTopNavButton(topDashboardBtn);
+        setupTopNavButton(topProjectsBtn);
+        setupTopNavButton(topSkillsBtn);
+        setupTopNavButton(topNotesBtn);
+        setupTopNavButton(topTasksBtn);
+        setupTopNavButton(topApiBtn);
+        setupTopNavButton(topSettingsBtn);
+
+        setSidebarOpen(false);
 
 
         // -----------------------------------------------------
@@ -2588,6 +2693,89 @@ public class DashboardController {
         if (nextPageButton != null) {
             nextPageButton.setDisable(index >= TOTAL_PAGES - 1);
         }
+        updateActiveNavButtons(index);
+    }
+
+    private void updateActiveNavButtons(int activeIndex) {
+        Button[] topButtons = {
+            topWelcomeBtn, topDashboardBtn, topProjectsBtn, topSkillsBtn,
+            topNotesBtn, topTasksBtn, topApiBtn, topSettingsBtn
+        };
+        for (int i = 0; i < topButtons.length; i++) {
+            Button btn = topButtons[i];
+            if (btn == null) continue;
+            boolean isActive = (i == activeIndex);
+            btn.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web(isActive ? "#2563EB" : "#1E293B"),
+                                    new CornerRadii(6),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+            btn.setTextFill(isActive ? Color.WHITE : Color.web("#CBD5E1"));
+        }
+
+        Button[] sideButtons = {
+            welcomeButton, dashboardButton, projectsButton, skillsButton,
+            notesButton, tasksButton, apiButton, settingsButton
+        };
+        for (int i = 0; i < sideButtons.length; i++) {
+            Button btn = sideButtons[i];
+            if (btn == null) continue;
+            boolean isActive = (i == activeIndex);
+            btn.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web(isActive ? "#2563EB" : "#111827"),
+                                    new CornerRadii(8),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+            btn.setTextFill(Color.WHITE);
+        }
+    }
+
+    private void setupTopNavButton(Button button) {
+        if (button == null) return;
+
+        button.setPrefHeight(32);
+        button.setPadding(new Insets(6, 12, 6, 12));
+        button.setCursor(Cursor.HAND);
+        button.setFont(
+                Font.font(
+                        "Arial",
+                        FontWeight.BOLD,
+                        12
+                )
+        );
+        button.setTextFill(Color.web("#CBD5E1"));
+        button.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#1E293B"),
+                                new CornerRadii(6),
+                                Insets.EMPTY
+                        )
+                )
+        );
+
+        button.setOnMouseEntered(e -> {
+            button.setBackground(
+                    new Background(
+                            new BackgroundFill(
+                                    Color.web("#3B82F6"),
+                                    new CornerRadii(6),
+                                    Insets.EMPTY
+                            )
+                    )
+            );
+            button.setTextFill(Color.WHITE);
+        });
+
+        button.setOnMouseExited(e -> updateActiveNavButtons(currentPageIndex));
     }
 
 
@@ -2612,6 +2800,7 @@ public class DashboardController {
 
         button.setPrefHeight(32);
         button.setPadding(new Insets(6, 14, 6, 14));
+        button.setCursor(Cursor.HAND);
         button.setFont(
                 Font.font(
                         "Arial",
@@ -3049,10 +3238,10 @@ public class DashboardController {
         }
 
 
-        styleFeatureCard(featureCard1, featureTitle1, "📁  Projects");
-        styleFeatureCard(featureCard2, featureTitle2, "🛠  Skills");
-        styleFeatureCard(featureCard3, featureTitle3, "📝  Notes");
-        styleFeatureCard(featureCard4, featureTitle4, "✅  Tasks");
+        styleFeatureCard(featureCard1, featureTitle1, "📁  Projects →", this::showProjects);
+        styleFeatureCard(featureCard2, featureTitle2, "🛠  Skills →", this::showSkills);
+        styleFeatureCard(featureCard3, featureTitle3, "📝  Notes →", this::showNotes);
+        styleFeatureCard(featureCard4, featureTitle4, "✅  Tasks →", this::showTasks);
 
 
         if (dbStatusBadge != null) {
@@ -3094,9 +3283,11 @@ public class DashboardController {
 
 
     private void styleFeatureCard(
-            VBox card, Label title, String text) {
+            VBox card, Label title, String text, Runnable onNavigate) {
 
         if (card == null) return;
+
+        card.setCursor(Cursor.HAND);
 
         card.setBackground(
                 new Background(
@@ -3111,6 +3302,30 @@ public class DashboardController {
         card.setPadding(
                 new Insets(20, 20, 20, 20)
         );
+
+        card.setOnMouseEntered(e -> card.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#334155"),
+                                new CornerRadii(12),
+                                Insets.EMPTY
+                        )
+                )
+        ));
+
+        card.setOnMouseExited(e -> card.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#1E293B"),
+                                new CornerRadii(12),
+                                Insets.EMPTY
+                        )
+                )
+        ));
+
+        if (onNavigate != null) {
+            card.setOnMouseClicked(e -> onNavigate.run());
+        }
 
         if (title != null) {
 
@@ -3139,6 +3354,8 @@ public class DashboardController {
         button.setPrefWidth(140);
 
         button.setPrefHeight(44);
+
+        button.setCursor(Cursor.HAND);
 
         button.setFont(
                 Font.font(
@@ -3231,55 +3448,16 @@ public class DashboardController {
 
 
         styleStatCard(statCard1, statLabel1, statProjectsCount, statSub1,
-                "Projects", "#3B82F6");
+                "Projects →", "#3B82F6", this::showProjects);
 
         styleStatCard(statCard2, statLabel2, statSkillsCount, statSub2,
-                "Skills", "#8B5CF6");
+                "Skills →", "#8B5CF6", this::showSkills);
 
         styleStatCard(statCard3, statLabel3, statNotesCount, statSub3,
-                "Notes", "#F59E0B");
+                "Notes →", "#F59E0B", this::showNotes);
 
         styleStatCard(statCard4, statLabel4, statTasksCount, statSub4,
-                "Tasks", "#10B981");
-
-
-        if (accentThemeLabel != null) {
-
-            accentThemeLabel.setTextFill(
-                    Color.web("#CBD5E1")
-            );
-
-            accentThemeLabel.setFont(
-                    Font.font(
-                            "Arial",
-                            FontWeight.BOLD,
-                            14
-                    )
-            );
-        }
-
-
-        if (accentColorPicker != null) {
-
-            accentColorPicker.setValue(
-                    Color.web("#38BDF8")
-            );
-
-            accentColorPicker
-                    .valueProperty()
-                    .addListener(
-                            (obs, oldColor, newColor) -> {
-
-                                if (logo != null) {
-                                    logo.setTextFill(newColor);
-                                }
-
-                                if (liveClockLabel != null) {
-                                    liveClockLabel.setTextFill(newColor);
-                                }
-                            }
-                    );
-        }
+                "Tasks →", "#10B981", this::showTasks);
 
 
         if (formattedDateLabel != null) {
@@ -3304,9 +3482,12 @@ public class DashboardController {
             Label countLabel,
             Label subLabel,
             String title,
-            String colorHex) {
+            String colorHex,
+            Runnable onNavigate) {
 
         if (card == null) return;
+
+        card.setCursor(Cursor.HAND);
 
         card.setBackground(
                 new Background(
@@ -3323,6 +3504,30 @@ public class DashboardController {
         );
 
         card.setMinWidth(160);
+
+        card.setOnMouseEntered(e -> card.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#334155"),
+                                new CornerRadii(14),
+                                Insets.EMPTY
+                        )
+                )
+        ));
+
+        card.setOnMouseExited(e -> card.setBackground(
+                new Background(
+                        new BackgroundFill(
+                                Color.web("#1E293B"),
+                                new CornerRadii(14),
+                                Insets.EMPTY
+                        )
+                )
+        ));
+
+        if (onNavigate != null) {
+            card.setOnMouseClicked(e -> onNavigate.run());
+        }
 
 
         if (titleLabel != null) {
@@ -3724,62 +3929,6 @@ public class DashboardController {
         skillsPieChart.setTitle("Skills by Category");
 
         skillsPieChart.setLabelsVisible(true);
-    }
-
-
-    // =========================================================
-    // DARK / LIGHT THEME TOGGLE
-    // =========================================================
-
-    @FXML
-    private void toggleTheme() {
-
-        isDarkMode = !isDarkMode;
-
-        String bgSidebar = isDarkMode ? "#020617" : "#1E293B";
-        String bgContent  = isDarkMode ? "#0F172A" : "#F1F5F9";
-
-        if (sidebar != null) {
-            sidebar.setBackground(
-                    new Background(
-                            new BackgroundFill(
-                                    Color.web(bgSidebar),
-                                    CornerRadii.EMPTY,
-                                    Insets.EMPTY
-                            )
-                    )
-            );
-        }
-
-        if (content != null) {
-            content.setBackground(
-                    new Background(
-                            new BackgroundFill(
-                                    Color.web(bgContent),
-                                    CornerRadii.EMPTY,
-                                    Insets.EMPTY
-                            )
-                    )
-            );
-        }
-
-        if (mainScrollPane != null) {
-            mainScrollPane.setBackground(
-                    new Background(
-                            new BackgroundFill(
-                                    Color.web(bgContent),
-                                    CornerRadii.EMPTY,
-                                    Insets.EMPTY
-                            )
-                    )
-            );
-        }
-
-        if (themeToggleButton != null) {
-            themeToggleButton.setText(
-                    isDarkMode ? "☀️ Light" : "🌙 Dark"
-            );
-        }
     }
 }
 
