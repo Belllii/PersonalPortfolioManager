@@ -105,42 +105,6 @@ DevFolio features a dual-navigation architecture:
 
 ---
 
-## 🎥 Video Demonstration & Presentation Script (Evaluation Guide)
-
-Use this section as your exact step-by-step walkthrough script during your video demonstration. Each item directly addresses the evaluation requirements.
-
----
-
-### Point 1: Version Control & GitHub Commits
-*Evaluation Requirement: Demonstrate regular usage of GitHub and commits, starting from the idea submission date (September 6th).*
-
-#### How to Present in Video:
-1. **Show GitHub Repository**: Open your browser to the GitHub repository page and show the commit history.
-2. **Show Terminal Git Log**: Open the terminal in IntelliJ or PowerShell and execute:
-   ```bash
-   git log --oneline --reverse
-   ```
-3. **Key Points to Highlight**:
-   - Highlight the regular, incremental progression of commits across the development lifecycle:
-     - `cc0c4c0` *Create basic JavaFX application window*
-     - `15e4aab` *Created Project model class*
-     - `541ce44` *Added Project Dashboard*
-     - `3a67536` *Add FXML dashboard and controller*
-     - `56478e5` *Add project table with ObservableList*
-     - `adcf0c2` *SQLite database and improved UI*
-     - `d32d4e6` *Connected projects to SQLite database*
-     - `cea0741` *Added Skill Section*
-     - `5741a86` *Add responsive UI and advanced JavaFX controls*
-     - `a79bc98` *Added HTTP integration and JSON parsing*
-     - `00e8c8a` *Added multithreading with executor thread pool*
-     - `170a934` *Final milestones, OOP refactor, and Polish*
-   - Mention that commits are descriptive, focused on individual features, and demonstrate continuous integration.
-
----
-
-### Point 2: Advanced OOP Concepts & Polymorphism
-*Evaluation Requirement: Show the implementation of advanced Object-Oriented Programming techniques (Classes, Interfaces, Abstract Classes, Polymorphism, Encapsulation, DAO Pattern).*
-
 ## 🗄 Database Schema & Entity Relationships
 
 ```
