@@ -1,7 +1,7 @@
 package com.portfolio;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -12,6 +12,9 @@ public class ApiService {
 
     private final HttpClient client =
             HttpClient.newHttpClient();
+
+    private final ObjectMapper objectMapper =
+            new ObjectMapper();
 
     public String fetchData() throws Exception {
 
@@ -32,21 +35,21 @@ public class ApiService {
 
         String json = response.body();
 
-        JsonObject object =
-                JsonParser.parseString(json)
-                        .getAsJsonObject();
+        // Jackson JSON parsing
+        JsonNode object =
+                objectMapper.readTree(json);
 
         int userId =
-                object.get("userId").getAsInt();
+                object.get("userId").asInt();
 
         int id =
-                object.get("id").getAsInt();
+                object.get("id").asInt();
 
         String title =
-                object.get("title").getAsString();
+                object.get("title").asText();
 
         boolean completed =
-                object.get("completed").getAsBoolean();
+                object.get("completed").asBoolean();
 
         return "User ID: " + userId
                 + "\nID: " + id

@@ -9,10 +9,7 @@ public class Database {
 
     private static final String URL =
             "jdbc:sqlite:portfolio.db";
-
-
     public static Connection connect() throws SQLException {
-
         Connection connection =
                 DriverManager.getConnection(URL);
 
